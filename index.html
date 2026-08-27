@@ -394,6 +394,73 @@ updateClock();
 
 function markIn() {
 
+    const name = document.getElementById("employee").value;
+
+    if (!navigator.geolocation) {
+        alert("Aapke device me location support nahi hai.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            const data = getData();
+            const date = todayKey();
+
+            if (!data[date]) {
+                data[date] = {};
+            }
+
+            if (!data[date][name]) {
+                data[date][name] = {};
+            }
+
+            if (data[date][name].in) {
+                alert("IN already marked for today.");
+                return;
+            }
+
+            data[date][name].in = currentTime();
+
+            data[date][name].location = {
+                latitude: latitude,
+                longitude: longitude,
+                accuracy: accuracy
+            };
+
+            saveData(data);
+
+            showStatus();
+
+            alert(
+                "IN successfully marked!\n\n" +
+                "Location captured successfully."
+            );
+        },
+
+        function(error) {
+
+            alert(
+                "Location nahi mil pa rahi hai.\n\n" +
+                "Please Location/GPS ON karein aur browser me Allow dabayein."
+            );
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+
+    );
+}
+
     const name =
         document.getElementById("employee").value;
 
