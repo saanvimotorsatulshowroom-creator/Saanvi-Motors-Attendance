@@ -61,8 +61,7 @@ async function markIn() {
 
             const { data: existing } =
                 await supabaseClient
-                .from("attendance")
-                .select("*")
+.from("ATTENDANCE")                .select("*")
                 .eq("employee_name", employee)
                 .eq("attendance_date", todayKey())
                 .maybeSingle();
@@ -74,8 +73,7 @@ async function markIn() {
 
             const { error } =
                 await supabaseClient
-                .from("attendance")
-                .upsert({
+.from("ATTENDANCE")                .upsert({
                     employee_name: employee,
                     attendance_date: todayKey(),
                     in_time: currentTime(),
