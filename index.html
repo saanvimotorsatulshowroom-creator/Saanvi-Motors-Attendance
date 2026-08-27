@@ -34,21 +34,19 @@
         </div>
 
 
-        <!-- ================= EMPLOYEE ================= -->
+        <!-- EMPLOYEE -->
 
         <div id="employeePanel">
 
-            <!-- LOGIN -->
-
             <div id="employeeLogin">
 
-                <label>Employee ID</label>
+                <label>Gmail</label>
 
                 <input
-                    type="text"
+                    type="email"
                     id="employeeCode"
-                    placeholder="Enter Employee ID"
-                    autocomplete="off"
+                    placeholder="Enter Gmail"
+                    autocomplete="email"
                 >
 
                 <label>PIN</label>
@@ -71,14 +69,11 @@
             </div>
 
 
-            <!-- LOGGED IN EMPLOYEE -->
-
             <div id="employeeArea" class="hidden">
 
                 <h2 id="employeeName"></h2>
 
                 <p id="employeeCodeDisplay"></p>
-
 
                 <div class="date-time">
 
@@ -87,7 +82,6 @@
                     <span id="time"></span>
 
                 </div>
-
 
                 <div class="buttons">
 
@@ -99,7 +93,6 @@
 
                     </button>
 
-
                     <button
                         class="mark-out"
                         onclick="markOut()">
@@ -110,7 +103,6 @@
 
                 </div>
 
-
                 <div
                     class="status"
                     id="status">
@@ -118,7 +110,6 @@
                     Aaj attendance mark nahi hui.
 
                 </div>
-
 
                 <button
                     class="admin-btn"
@@ -133,7 +124,7 @@
         </div>
 
 
-        <!-- ================= ADMIN ================= -->
+        <!-- ADMIN -->
 
         <div id="adminPanel" class="hidden">
 
@@ -174,9 +165,7 @@
 
                 </div>
 
-
                 <p id="summary"></p>
-
 
                 <div class="table-container">
 
@@ -185,19 +174,13 @@
                         <thead>
 
                             <tr>
-
                                 <th>Employee</th>
-
                                 <th>IN</th>
-
                                 <th>OUT</th>
-
                                 <th>LOCATION</th>
-
                             </tr>
 
                         </thead>
-
 
                         <tbody id="attendanceTable"></tbody>
 
@@ -210,7 +193,6 @@
         </div>
 
     </div>
-
 
     <div class="footer">
         Saanvi Motors • Attendance System
