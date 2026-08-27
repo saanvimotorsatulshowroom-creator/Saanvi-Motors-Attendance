@@ -1,4 +1,5 @@
 const SUPABASE_URL = "https://edcrxbzpubjmyeecrbfd.supabase.co";
+
 const SUPABASE_KEY = "sb_publishable_Yn2d81cVel9qO_2y_p4kSg_DqxB1U1o";
 
 const supabaseClient = window.supabase.createClient(
@@ -6,44 +7,22 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_KEY
 );
 
+const ADMIN_PASSWORD = "saanvi123";
 
-/* =========================
-   EMPLOYEES
-========================= */
-
-const employees = [
-    "Rohit Kumar",
-    "Abhishek Raj",
-    "Gudiya Kumari",
-    "Farukh Alam",
-    "Neyaj Alam",
-    "Sipahi Kumar",
-    "Chunnu Kumar"
-];
-
-const ADMIN_PASSWORD = "sahilsah123";
+let currentEmployee = null;
 
 
 /* =========================
-   DATE
+   DATE & TIME
 ========================= */
 
 function todayKey() {
     const d = new Date();
 
-    return (
-        d.getFullYear() +
-        "-" +
-        String(d.getMonth() + 1).padStart(2, "0") +
-        "-" +
-        String(d.getDate()).padStart(2, "0")
-    );
+    return d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0");
 }
-
-
-/* =========================
-   TIME
-========================= */
 
 function currentTime() {
     return new Date().toLocaleTimeString("en-IN", {
@@ -53,160 +32,206 @@ function currentTime() {
     });
 }
 
-
-/* =========================
-   CLOCK
-========================= */
-
 function updateDateTime() {
 
-    const now = new Date();
+    const date = document.getElementById("date");
+    const time = document.getElementById("time");
 
-    const dateElement =
-        document.getElementById("date");
-
-    const timeElement =
-        document.getElementById("time");
-
-
-    if (dateElement) {
-        dateElement.innerText =
-            now.toLocaleDateString("en-IN", {
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
-            });
+    if (date) {
+        date.innerText = new Date().toLocaleDateString("en-IN", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        });
     }
 
-
-    if (timeElement) {
-        timeElement.innerText =
-            now.toLocaleTimeString("en-IN", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true
-            });
+    if (time) {
+        time.innerText = new Date().toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+        });
     }
 }
 
 setInterval(updateDateTime, 1000);
-
 updateDateTime();
 
 
 /* =========================
-   EMPLOYEE TAB
+   TABS
 ========================= */
 
 function showEmployee() {
 
-    document
-        .getElementById("employeePanel")
+    document.getElementById("employeePanel")
         .classList.remove("hidden");
 
-    document
-        .getElementById("adminPanel")
+    document.getElementById("adminPanel")
         .classList.add("hidden");
 }
-
-
-/* =========================
-   ADMIN TAB
-========================= */
 
 function showAdmin() {
 
-    document
-        .getElementById("employeePanel")
+    document.getElementById("employeePanel")
         .classList.add("hidden");
 
-    document
-        .getElementById("adminPanel")
+    document.getElementById("adminPanel")
         .classList.remove("hidden");
 }
 
 
 /* =========================
-   EMPLOYEE STATUS
+   EMPLOYEE LOGIN
 ========================= */
 
-async function showStatus() {
+async function employeeLogin() {
 
-    const employee =
-        document.getElementById("employee").value;
+    const code = document
+        .getElementById("employeeCode")
+        .value
+        .trim()
+        .toUpperCase();
 
-    const status =
-        document.getElementById("status");
+    const pin = document
+        .getElementById("employeePin")
+        .value
+        .trim();
 
-    if (!employee) {
-        status.innerText =
-            "Aaj attendance mark nahi hui.";
+    if (!code || !pin) {
+        alert("Employee ID aur PIN dono enter karo.");
         return;
     }
 
-    status.innerText =
-        "Checking attendance...";
-
-
-    const { data, error } =
-        await supabaseClient
-        .from("ATTENDANCE")
+    const { data, error } = await supabaseClient
+        .from("employees")
         .select("*")
-        .eq("employee_name", employee)
-        .eq("attendance_date", todayKey())
-        .order("id", {
-            ascending: false
-        })
+        .eq("employee_code", code)
         .limit(1);
-
 
     if (error) {
 
         console.error(error);
 
-        status.innerText =
-            "Attendance status load nahi hui.";
+        alert("Database error: " + error.message);
 
         return;
     }
 
+    if (!data || data.length === 0) {
 
-    const existing =
-        data && data.length > 0
-            ? data[0]
-            : null;
-
-
-    if (!existing) {
-
-        status.innerText =
-            "Aaj attendance mark nahi hui.";
+        alert("Invalid Employee ID.");
 
         return;
     }
 
+    const employee = data[0];
 
-    if (existing.in_time && existing.out_time) {
+    if (String(employee.pin) !== String(pin)) {
+
+        alert("Wrong PIN.");
+
+        return;
+    }
+
+    currentEmployee = employee;
+
+    document.getElementById("employeeLogin")
+        .classList.add("hidden");
+
+    document.getElementById("employeeArea")
+        .classList.remove("hidden");
+
+    document.getElementById("employeeName")
+        .innerText = employee.employee_name;
+
+    document.getElementById("employeeCodeDisplay")
+        .innerText = "Employee ID: " + employee.employee_code;
+
+    await showStatus();
+}
+
+
+/* =========================
+   EMPLOYEE LOGOUT
+========================= */
+
+function employeeLogout() {
+
+    currentEmployee = null;
+
+    document.getElementById("employeeArea")
+        .classList.add("hidden");
+
+    document.getElementById("employeeLogin")
+        .classList.remove("hidden");
+
+    document.getElementById("employeeCode")
+        .value = "";
+
+    document.getElementById("employeePin")
+        .value = "";
+
+    document.getElementById("status")
+        .innerText = "Aaj attendance mark nahi hui.";
+}
+
+
+/* =========================
+   SHOW STATUS
+========================= */
+
+async function showStatus() {
+
+    if (!currentEmployee) return;
+
+    const status = document.getElementById("status");
+
+    status.innerText = "Checking attendance...";
+
+    const { data, error } = await supabaseClient
+        .from("ATTENDANCE")
+        .select("*")
+        .eq("employee_name", currentEmployee.employee_name)
+        .eq("attendance_date", todayKey())
+        .order("id", { ascending: false })
+        .limit(1);
+
+    if (error) {
+
+        console.error(error);
+
+        status.innerText = "Attendance status load nahi hui.";
+
+        return;
+    }
+
+    const record = data && data.length ? data[0] : null;
+
+    if (!record) {
+
+        status.innerText = "Aaj attendance mark nahi hui.";
+
+        return;
+    }
+
+    if (record.in_time && record.out_time) {
 
         status.innerText =
-            "IN: " +
-            existing.in_time +
-            " | OUT: " +
-            existing.out_time;
+            "IN: " + record.in_time +
+            " | OUT: " + record.out_time;
 
-    } else if (existing.in_time) {
+    } else if (record.in_time) {
 
         status.innerText =
-            "IN: " +
-            existing.in_time +
+            "IN: " + record.in_time +
             " | OUT abhi nahi hua.";
 
     } else {
 
-        status.innerText =
-            "Aaj attendance mark nahi hui.";
+        status.innerText = "Aaj attendance mark nahi hui.";
     }
 }
 
@@ -217,29 +242,19 @@ async function showStatus() {
 
 async function markIn() {
 
-    const employee =
-        document.getElementById("employee").value;
+    if (!currentEmployee) {
 
-
-    if (!employee) {
-
-        alert(
-            "Pehle employee select karo."
-        );
+        alert("Pehle Employee Login karo.");
 
         return;
     }
-
 
     if (!navigator.geolocation) {
 
-        alert(
-            "Is phone/browser me location available nahi hai."
-        );
+        alert("Is phone/browser me Location available nahi hai.");
 
         return;
     }
-
 
     navigator.geolocation.getCurrentPosition(
 
@@ -255,27 +270,32 @@ async function markIn() {
                 position.coords.accuracy;
 
 
-            /* CHECK EXISTING RECORD */
-
-            const { data, error: checkError } =
+            const { data, error } =
                 await supabaseClient
                 .from("ATTENDANCE")
                 .select("*")
-                .eq("employee_name", employee)
-                .eq("attendance_date", todayKey())
-                .order("id", {
-                    ascending: false
-                })
+                .eq(
+                    "employee_name",
+                    currentEmployee.employee_name
+                )
+                .eq(
+                    "attendance_date",
+                    todayKey()
+                )
+                .order(
+                    "id",
+                    { ascending: false }
+                )
                 .limit(1);
 
 
-            if (checkError) {
+            if (error) {
 
-                console.error(checkError);
+                console.error(error);
 
                 alert(
                     "Database error: " +
-                    checkError.message
+                    error.message
                 );
 
                 return;
@@ -283,7 +303,7 @@ async function markIn() {
 
 
             const existing =
-                data && data.length > 0
+                data && data.length
                     ? data[0]
                     : null;
 
@@ -298,36 +318,41 @@ async function markIn() {
             }
 
 
-            /* SAVE ATTENDANCE + LOCATION */
-
-            const { error } =
+            const { error: insertError } =
                 await supabaseClient
                 .from("ATTENDANCE")
                 .insert({
 
-                    employee_name: employee,
+                    employee_name:
+                        currentEmployee.employee_name,
 
-                    attendance_date: todayKey(),
+                    attendance_date:
+                        todayKey(),
 
-                    in_time: currentTime(),
+                    in_time:
+                        currentTime(),
 
-                    out_time: null,
+                    out_time:
+                        null,
 
-                    latitude: latitude,
+                    latitude:
+                        latitude,
 
-                    longitude: longitude,
+                    longitude:
+                        longitude,
 
-                    accuracy: accuracy
+                    accuracy:
+                        accuracy
                 });
 
 
-            if (error) {
+            if (insertError) {
 
-                console.error(error);
+                console.error(insertError);
 
                 alert(
                     "Attendance save nahi hui: " +
-                    error.message
+                    insertError.message
                 );
 
                 return;
@@ -338,8 +363,7 @@ async function markIn() {
                 "🟢 MARK IN successfully ho gaya."
             );
 
-
-            showStatus();
+            await showStatus();
         },
 
 
@@ -347,29 +371,28 @@ async function markIn() {
 
             console.error(error);
 
-
             if (error.code === 1) {
 
                 alert(
-                    "Location permission denied hai. Chrome ko Location Allow karo."
+                    "Location permission Allow karo."
                 );
 
             } else if (error.code === 2) {
 
                 alert(
-                    "Location nahi mil rahi. Phone ka GPS/Location ON karo."
+                    "Phone ka GPS/Location ON karo."
                 );
 
             } else if (error.code === 3) {
 
                 alert(
-                    "Location request timeout ho gaya. Dobara try karo."
+                    "Location timeout. Dobara try karo."
                 );
 
             } else {
 
                 alert(
-                    "Location error. Dobara try karo."
+                    "Location error."
                 );
             }
         },
@@ -390,64 +413,61 @@ async function markIn() {
 
 async function markOut() {
 
-    const employee =
-        document.getElementById("employee").value;
+    if (!currentEmployee) {
 
-
-    if (!employee) {
-
-        alert(
-            "Pehle employee select karo."
-        );
+        alert("Pehle Employee Login karo.");
 
         return;
     }
 
 
-    /* FIND TODAY'S RECORD */
-
-    const { data, error: checkError } =
+    const { data, error } =
         await supabaseClient
         .from("ATTENDANCE")
         .select("*")
-        .eq("employee_name", employee)
-        .eq("attendance_date", todayKey())
-        .order("id", {
-            ascending: false
-        })
+        .eq(
+            "employee_name",
+            currentEmployee.employee_name
+        )
+        .eq(
+            "attendance_date",
+            todayKey()
+        )
+        .order(
+            "id",
+            { ascending: false }
+        )
         .limit(1);
 
 
-    if (checkError) {
+    if (error) {
 
-        console.error(checkError);
+        console.error(error);
 
         alert(
             "Database error: " +
-            checkError.message
+            error.message
         );
 
         return;
     }
 
 
-    const existing =
-        data && data.length > 0
+    const record =
+        data && data.length
             ? data[0]
             : null;
 
 
-    if (!existing || !existing.in_time) {
+    if (!record || !record.in_time) {
 
-        alert(
-            "Pehle MARK IN karo."
-        );
+        alert("Pehle MARK IN karo.");
 
         return;
     }
 
 
-    if (existing.out_time) {
+    if (record.out_time) {
 
         alert(
             "Aaj ka MARK OUT already ho chuka hai."
@@ -457,26 +477,22 @@ async function markOut() {
     }
 
 
-    /* SAVE OUT TIME */
-
-    const { error } =
+    const { error: updateError } =
         await supabaseClient
         .from("ATTENDANCE")
         .update({
-
             out_time: currentTime()
-
         })
-        .eq("id", existing.id);
+        .eq("id", record.id);
 
 
-    if (error) {
+    if (updateError) {
 
-        console.error(error);
+        console.error(updateError);
 
         alert(
             "MARK OUT save nahi hua: " +
-            error.message
+            updateError.message
         );
 
         return;
@@ -487,8 +503,7 @@ async function markOut() {
         "🔴 MARK OUT successfully ho gaya."
     );
 
-
-    showStatus();
+    await showStatus();
 }
 
 
@@ -504,16 +519,16 @@ async function loginAdmin() {
 
     if (password !== ADMIN_PASSWORD) {
 
-        alert(
-            "Wrong Admin Password."
-        );
+        alert("Wrong Admin Password.");
 
         return;
     }
 
 
-    document
-        .getElementById("adminArea")
+    document.getElementById("adminLoginArea")
+        .classList.add("hidden");
+
+    document.getElementById("adminArea")
         .classList.remove("hidden");
 
 
@@ -522,7 +537,7 @@ async function loginAdmin() {
 
 
 /* =========================
-   ADMIN ATTENDANCE
+   ADMIN DATA
 ========================= */
 
 async function loadAdmin() {
@@ -531,10 +546,14 @@ async function loadAdmin() {
         await supabaseClient
         .from("ATTENDANCE")
         .select("*")
-        .eq("attendance_date", todayKey())
-        .order("id", {
-            ascending: true
-        });
+        .eq(
+            "attendance_date",
+            todayKey()
+        )
+        .order(
+            "id",
+            { ascending: true }
+        );
 
 
     if (error) {
@@ -555,128 +574,131 @@ async function loadAdmin() {
             "attendanceTable"
         );
 
-
     table.innerHTML = "";
+
+
+    const employeeList = [
+        "Rohit Kumar",
+        "Abhishek Raj",
+        "Gudiya Kumari",
+        "Farukh Alam",
+        "Neyaj Alam",
+        "Sipahi Kumar",
+        "Chunnu Kumar"
+    ];
 
 
     let present = 0;
 
 
-    employees.forEach(function(employee) {
+    employeeList.forEach(
+        function(employeeName) {
 
-        const records =
-            data.filter(function(item) {
-
-                return (
-                    item.employee_name ===
-                    employee
+            const records =
+                data.filter(
+                    function(item) {
+                        return item.employee_name === employeeName;
+                    }
                 );
 
-            });
+
+            const record =
+                records.length
+                    ? records[records.length - 1]
+                    : null;
 
 
-        const record =
-            records.length > 0
-                ? records[records.length - 1]
-                : null;
+            if (record && record.in_time) {
+                present++;
+            }
 
 
-        if (record && record.in_time) {
+            let locationHTML = "—";
 
-            present++;
 
+            if (
+                record &&
+                record.latitude !== null &&
+                record.longitude !== null
+            ) {
+
+                const mapURL =
+                    "https://www.google.com/maps?q=" +
+                    record.latitude +
+                    "," +
+                    record.longitude;
+
+
+                locationHTML =
+                    '<a href="' +
+                    mapURL +
+                    '" target="_blank" rel="noopener noreferrer">' +
+                    "📍 View Location" +
+                    "</a>";
+            }
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML =
+                "<td>" +
+                employeeName +
+                "</td>" +
+
+                "<td>" +
+                (record?.in_time || "—") +
+                "</td>" +
+
+                "<td>" +
+                (record?.out_time || "—") +
+                "</td>" +
+
+                "<td>" +
+                locationHTML +
+                "</td>";
+
+
+            table.appendChild(row);
         }
+    );
 
 
-        const row =
-            document.createElement("tr");
-
-
-        /* LOCATION BUTTON */
-
-        let locationHTML = "—";
-
-
-        if (
-            record &&
-            record.latitude !== null &&
-            record.longitude !== null
-        ) {
-
-            const lat =
-                record.latitude;
-
-            const lng =
-                record.longitude;
-
-
-            const mapURL =
-                "https://www.google.com/maps?q=" +
-                lat +
-                "," +
-                lng;
-
-
-            locationHTML =
-                '<a href="' +
-                mapURL +
-                '" target="_blank" rel="noopener noreferrer">' +
-                "📍 View Location" +
-                "</a>";
-        }
-
-
-        row.innerHTML =
-
-            "<td>" +
-            employee +
-            "</td>" +
-
-            "<td>" +
-            (record?.in_time || "—") +
-            "</td>" +
-
-            "<td>" +
-            (record?.out_time || "—") +
-            "</td>" +
-
-            "<td>" +
-            locationHTML +
-            "</td>";
-
-
-        table.appendChild(row);
-
-    });
-
-
-    document.getElementById(
-        "summary"
-    ).innerText =
-
+    document.getElementById("summary")
+        .innerText =
         "Present: " +
         present +
         " / " +
-        employees.length;
+        employeeList.length;
 }
 
 
 /* =========================
-   EXPORT
+   EXPORT CSV
 ========================= */
 
-function exportCSV() {
+async function exportCSV() {
 
-    const table =
-        document.getElementById(
-            "attendanceTable"
+    const { data, error } =
+        await supabaseClient
+        .from("ATTENDANCE")
+        .select("*")
+        .eq(
+            "attendance_date",
+            todayKey()
+        )
+        .order(
+            "id",
+            { ascending: true }
         );
 
 
-    if (!table) {
+    if (error) {
 
         alert(
-            "Attendance data nahi mili."
+            "Export failed: " +
+            error.message
         );
 
         return;
@@ -684,50 +706,28 @@ function exportCSV() {
 
 
     let csv =
-        "Employee,IN,OUT,Latitude,Longitude,Accuracy\n";
+        "Employee,Date,IN,OUT,Latitude,Longitude,Accuracy\n";
 
 
-    const rows =
-        table.querySelectorAll("tr");
-
-
-    rows.forEach(function(row) {
-
-        const cells =
-            row.querySelectorAll("td");
-
-
-        if (cells.length >= 3) {
-
-            const employee =
-                cells[0].innerText;
-
-            const inTime =
-                cells[1].innerText;
-
-            const outTime =
-                cells[2].innerText;
-
+    data.forEach(
+        function(record) {
 
             csv +=
-                '"' +
-                employee +
-                '","' +
-                inTime +
-                '","' +
-                outTime +
-                '"\n';
+                '"' + record.employee_name + '","' +
+                record.attendance_date + '","' +
+                (record.in_time || "") + '","' +
+                (record.out_time || "") + '","' +
+                (record.latitude || "") + '","' +
+                (record.longitude || "") + '","' +
+                (record.accuracy || "") + '"\n';
         }
-
-    });
+    );
 
 
     const blob =
         new Blob(
             [csv],
-            {
-                type: "text/csv"
-            }
+            { type: "text/csv" }
         );
 
 
@@ -735,23 +735,22 @@ function exportCSV() {
         URL.createObjectURL(blob);
 
 
-    const a =
+    const link =
         document.createElement("a");
 
+    link.href = url;
 
-    a.href = url;
-
-    a.download =
+    link.download =
         "Saanvi_Motors_Attendance_" +
         todayKey() +
         ".csv";
 
 
-    document.body.appendChild(a);
+    document.body.appendChild(link);
 
-    a.click();
+    link.click();
 
-    document.body.removeChild(a);
+    document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
 }
