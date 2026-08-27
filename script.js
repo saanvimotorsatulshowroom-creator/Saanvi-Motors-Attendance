@@ -1,9 +1,9 @@
 const SUPABASE_URL = "https://edcrxbzpubjmyeecrbfd.supabase.co";
-const SUPABASE_KEY = sb_publishable_Yn2d81cVel9qO_2y_p4kSg_DqxB1U1o
-const supabaseClient = window.supabase.createClient(
+const SUPABASE_KEY = "sb_publishable_Yn2d81cVel9qO_2y_p4kSg_DqxB1U1o";const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+
 
 const employees = [
     "Rohit Kumar",
