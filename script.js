@@ -45,11 +45,10 @@ function currentTime() {
 
 
 /* =========================
-   EMPLOYEE / ADMIN TABS
+   EMPLOYEE / ADMIN
 ========================= */
 
 function showEmployee() {
-
     document.getElementById("employeePanel")
         .classList.remove("hidden");
 
@@ -59,7 +58,6 @@ function showEmployee() {
 
 
 function showAdmin() {
-
     document.getElementById("employeePanel")
         .classList.add("hidden");
 
@@ -69,7 +67,7 @@ function showAdmin() {
 
 
 /* =========================
-   EMPLOYEE STATUS
+   STATUS
 ========================= */
 
 async function showStatus() {
@@ -85,33 +83,52 @@ async function showStatus() {
     const { data, error } =
         await supabaseClient
         .from("ATTENDANCE")
-        .select("in_time,out_time")
+        .select("*")
         .eq("employee_name", employee)
         .eq("attendance_date", todayKey())
-        .maybeSingle();
+        .order("id", { ascending: false })
+        .limit(1);
 
     if (error) {
-        console.log(error);
+        console.error(error);
+
         status.innerText =
             "Attendance status load nahi hui.";
+
         return;
     }
 
-    if (!data) {
+    const existing =
+        data && data.length > 0
+            ? data[0]
+            : null;
+
+    if (!existing) {
         status.innerText =
             "Aaj attendance mark nahi hui.";
+
         return;
     }
 
-    if (data.in_time && data.out_time) {
+    if (existing.in_time && existing.out_time) {
+
         status.innerText =
-            "IN: " + data.in_time +
-            " | OUT: " + data.out_time;
-    }
-    else if (data.in_time) {
+            "IN: " +
+            existing.in_time +
+            " | OUT: " +
+            existing.out_time;
+
+    } else if (existing.in_time) {
+
         status.innerText =
-            "IN: " + data.in_time +
+            "IN: " +
+            existing.in_time +
             " | OUT abhi nahi hua.";
+
+    } else {
+
+        status.innerText =
+            "Aaj attendance mark nahi hui.";
     }
 }
 
@@ -131,11 +148,9 @@ async function markIn() {
     }
 
     if (!navigator.geolocation) {
-        alert("Is browser me location available nahi hai.");
+        alert("Is browser me GPS/location available nahi hai.");
         return;
     }
-
-    alert("Location permission Allow karo.");
 
     navigator.geolocation.getCurrentPosition(
 
@@ -151,13 +166,16 @@ async function markIn() {
                 position.coords.accuracy;
 
 
-            const { data: existing, error: checkError } =
+            /* CHECK TODAY'S RECORD */
+
+            const { data, error: checkError } =
                 await supabaseClient
                 .from("ATTENDANCE")
                 .select("*")
                 .eq("employee_name", employee)
                 .eq("attendance_date", todayKey())
-                .maybeSingle();
+                .order("id", { ascending: false })
+                .limit(1);
 
 
             if (checkError) {
@@ -173,6 +191,12 @@ async function markIn() {
             }
 
 
+            const existing =
+                data && data.length > 0
+                    ? data[0]
+                    : null;
+
+
             if (existing && existing.in_time) {
 
                 alert(
@@ -182,6 +206,8 @@ async function markIn() {
                 return;
             }
 
+
+            /* INSERT ATTENDANCE */
 
             const { error } =
                 await supabaseClient
@@ -193,6 +219,8 @@ async function markIn() {
                     attendance_date: todayKey(),
 
                     in_time: currentTime(),
+
+                    out_time: null,
 
                     latitude: latitude,
 
@@ -216,7 +244,9 @@ async function markIn() {
             }
 
 
-            alert("🟢 MARK IN successfully ho gaya.");
+            alert(
+                "🟢 MARK IN successfully ho gaya."
+            );
 
             showStatus();
         },
@@ -229,7 +259,7 @@ async function markIn() {
             if (error.code === 1) {
 
                 alert(
-                    "Location permission DENIED hai. Browser settings me Location Allow karo."
+                    "Location permission Allow karo."
                 );
 
             } else if (error.code === 2) {
@@ -271,13 +301,16 @@ async function markOut() {
     }
 
 
-    const { data: existing, error: checkError } =
+    /* FIND TODAY'S LATEST RECORD */
+
+    const { data, error: checkError } =
         await supabaseClient
         .from("ATTENDANCE")
         .select("*")
         .eq("employee_name", employee)
         .eq("attendance_date", todayKey())
-        .maybeSingle();
+        .order("id", { ascending: false })
+        .limit(1);
 
 
     if (checkError) {
@@ -291,6 +324,12 @@ async function markOut() {
 
         return;
     }
+
+
+    const existing =
+        data && data.length > 0
+            ? data[0]
+            : null;
 
 
     if (!existing || !existing.in_time) {
@@ -312,6 +351,8 @@ async function markOut() {
         return;
     }
 
+
+    /* UPDATE OUT TIME */
 
     const { error } =
         await supabaseClient
@@ -337,7 +378,9 @@ async function markOut() {
     }
 
 
-    alert("🔴 MARK OUT successfully ho gaya.");
+    alert(
+        "🔴 MARK OUT successfully ho gaya."
+    );
 
     showStatus();
 }
@@ -370,7 +413,7 @@ async function loginAdmin() {
 
 
 /* =========================
-   ADMIN ATTENDANCE
+   ADMIN DATA
 ========================= */
 
 async function loadAdmin() {
@@ -380,9 +423,7 @@ async function loadAdmin() {
         .from("ATTENDANCE")
         .select("*")
         .eq("attendance_date", todayKey())
-        .order("id", {
-            ascending: true
-        });
+        .order("id", { ascending: true });
 
 
     if (error) {
@@ -409,18 +450,24 @@ async function loadAdmin() {
 
     employees.forEach(function(employee) {
 
-        const record =
-            data.find(function(item) {
+        const records =
+            data.filter(function(item) {
 
                 return item.employee_name === employee;
 
             });
 
 
+        /* LATEST RECORD */
+
+        const record =
+            records.length > 0
+                ? records[records.length - 1]
+                : null;
+
+
         if (record && record.in_time) {
-
             present++;
-
         }
 
 
@@ -464,6 +511,52 @@ async function loadAdmin() {
 function exportCSV() {
 
     alert(
-        "Export feature baad me add karenge."
+        "Export feature abhi add nahi kiya gaya."
     );
 }
+
+
+/* =========================
+   DATE & CLOCK
+========================= */
+
+function updateDateTime() {
+
+    const now = new Date();
+
+
+    const dateElement =
+        document.getElementById("date");
+
+    const timeElement =
+        document.getElementById("time");
+
+
+    if (dateElement) {
+
+        dateElement.innerText =
+            now.toLocaleDateString("en-IN", {
+                weekday: "long",
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            });
+    }
+
+
+    if (timeElement) {
+
+        timeElement.innerText =
+            now.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            });
+    }
+}
+
+
+setInterval(updateDateTime, 1000);
+
+updateDateTime();
