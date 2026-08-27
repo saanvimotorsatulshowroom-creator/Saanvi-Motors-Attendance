@@ -6,6 +6,11 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_KEY
 );
 
+
+/* =========================
+   EMPLOYEES
+========================= */
+
 const employees = [
     "Rohit Kumar",
     "Abhishek Raj",
@@ -20,7 +25,7 @@ const ADMIN_PASSWORD = "saanvi123";
 
 
 /* =========================
-   DATE & TIME
+   DATE
 ========================= */
 
 function todayKey() {
@@ -35,6 +40,11 @@ function todayKey() {
     );
 }
 
+
+/* =========================
+   TIME
+========================= */
+
 function currentTime() {
     return new Date().toLocaleTimeString("en-IN", {
         hour: "2-digit",
@@ -45,29 +55,81 @@ function currentTime() {
 
 
 /* =========================
-   EMPLOYEE / ADMIN
+   CLOCK
+========================= */
+
+function updateDateTime() {
+
+    const now = new Date();
+
+    const dateElement =
+        document.getElementById("date");
+
+    const timeElement =
+        document.getElementById("time");
+
+
+    if (dateElement) {
+        dateElement.innerText =
+            now.toLocaleDateString("en-IN", {
+                weekday: "long",
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            });
+    }
+
+
+    if (timeElement) {
+        timeElement.innerText =
+            now.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            });
+    }
+}
+
+setInterval(updateDateTime, 1000);
+
+updateDateTime();
+
+
+/* =========================
+   EMPLOYEE TAB
 ========================= */
 
 function showEmployee() {
-    document.getElementById("employeePanel")
+
+    document
+        .getElementById("employeePanel")
         .classList.remove("hidden");
 
-    document.getElementById("adminPanel")
+    document
+        .getElementById("adminPanel")
         .classList.add("hidden");
 }
 
 
+/* =========================
+   ADMIN TAB
+========================= */
+
 function showAdmin() {
-    document.getElementById("employeePanel")
+
+    document
+        .getElementById("employeePanel")
         .classList.add("hidden");
 
-    document.getElementById("adminPanel")
+    document
+        .getElementById("adminPanel")
         .classList.remove("hidden");
 }
 
 
 /* =========================
-   STATUS
+   EMPLOYEE STATUS
 ========================= */
 
 async function showStatus() {
@@ -78,7 +140,15 @@ async function showStatus() {
     const status =
         document.getElementById("status");
 
-    status.innerText = "Checking attendance...";
+    if (!employee) {
+        status.innerText =
+            "Aaj attendance mark nahi hui.";
+        return;
+    }
+
+    status.innerText =
+        "Checking attendance...";
+
 
     const { data, error } =
         await supabaseClient
@@ -86,10 +156,14 @@ async function showStatus() {
         .select("*")
         .eq("employee_name", employee)
         .eq("attendance_date", todayKey())
-        .order("id", { ascending: false })
+        .order("id", {
+            ascending: false
+        })
         .limit(1);
 
+
     if (error) {
+
         console.error(error);
 
         status.innerText =
@@ -98,17 +172,21 @@ async function showStatus() {
         return;
     }
 
+
     const existing =
         data && data.length > 0
             ? data[0]
             : null;
 
+
     if (!existing) {
+
         status.innerText =
             "Aaj attendance mark nahi hui.";
 
         return;
     }
+
 
     if (existing.in_time && existing.out_time) {
 
@@ -142,15 +220,26 @@ async function markIn() {
     const employee =
         document.getElementById("employee").value;
 
+
     if (!employee) {
-        alert("Employee select karo.");
+
+        alert(
+            "Pehle employee select karo."
+        );
+
         return;
     }
 
+
     if (!navigator.geolocation) {
-        alert("Is browser me GPS/location available nahi hai.");
+
+        alert(
+            "Is phone/browser me location available nahi hai."
+        );
+
         return;
     }
+
 
     navigator.geolocation.getCurrentPosition(
 
@@ -166,7 +255,7 @@ async function markIn() {
                 position.coords.accuracy;
 
 
-            /* CHECK TODAY'S RECORD */
+            /* CHECK EXISTING RECORD */
 
             const { data, error: checkError } =
                 await supabaseClient
@@ -174,7 +263,9 @@ async function markIn() {
                 .select("*")
                 .eq("employee_name", employee)
                 .eq("attendance_date", todayKey())
-                .order("id", { ascending: false })
+                .order("id", {
+                    ascending: false
+                })
                 .limit(1);
 
 
@@ -207,7 +298,7 @@ async function markIn() {
             }
 
 
-            /* INSERT ATTENDANCE */
+            /* SAVE ATTENDANCE + LOCATION */
 
             const { error } =
                 await supabaseClient
@@ -227,7 +318,6 @@ async function markIn() {
                     longitude: longitude,
 
                     accuracy: accuracy
-
                 });
 
 
@@ -248,6 +338,7 @@ async function markIn() {
                 "🟢 MARK IN successfully ho gaya."
             );
 
+
             showStatus();
         },
 
@@ -256,16 +347,23 @@ async function markIn() {
 
             console.error(error);
 
+
             if (error.code === 1) {
 
                 alert(
-                    "Location permission Allow karo."
+                    "Location permission denied hai. Chrome ko Location Allow karo."
                 );
 
             } else if (error.code === 2) {
 
                 alert(
                     "Location nahi mil rahi. Phone ka GPS/Location ON karo."
+                );
+
+            } else if (error.code === 3) {
+
+                alert(
+                    "Location request timeout ho gaya. Dobara try karo."
                 );
 
             } else {
@@ -295,13 +393,18 @@ async function markOut() {
     const employee =
         document.getElementById("employee").value;
 
+
     if (!employee) {
-        alert("Employee select karo.");
+
+        alert(
+            "Pehle employee select karo."
+        );
+
         return;
     }
 
 
-    /* FIND TODAY'S LATEST RECORD */
+    /* FIND TODAY'S RECORD */
 
     const { data, error: checkError } =
         await supabaseClient
@@ -309,7 +412,9 @@ async function markOut() {
         .select("*")
         .eq("employee_name", employee)
         .eq("attendance_date", todayKey())
-        .order("id", { ascending: false })
+        .order("id", {
+            ascending: false
+        })
         .limit(1);
 
 
@@ -352,7 +457,7 @@ async function markOut() {
     }
 
 
-    /* UPDATE OUT TIME */
+    /* SAVE OUT TIME */
 
     const { error } =
         await supabaseClient
@@ -382,6 +487,7 @@ async function markOut() {
         "🔴 MARK OUT successfully ho gaya."
     );
 
+
     showStatus();
 }
 
@@ -398,13 +504,16 @@ async function loginAdmin() {
 
     if (password !== ADMIN_PASSWORD) {
 
-        alert("Wrong Admin Password.");
+        alert(
+            "Wrong Admin Password."
+        );
 
         return;
     }
 
 
-    document.getElementById("adminArea")
+    document
+        .getElementById("adminArea")
         .classList.remove("hidden");
 
 
@@ -413,7 +522,7 @@ async function loginAdmin() {
 
 
 /* =========================
-   ADMIN DATA
+   ADMIN ATTENDANCE
 ========================= */
 
 async function loadAdmin() {
@@ -423,7 +532,9 @@ async function loadAdmin() {
         .from("ATTENDANCE")
         .select("*")
         .eq("attendance_date", todayKey())
-        .order("id", { ascending: true });
+        .order("id", {
+            ascending: true
+        });
 
 
     if (error) {
@@ -440,7 +551,10 @@ async function loadAdmin() {
 
 
     const table =
-        document.getElementById("attendanceTable");
+        document.getElementById(
+            "attendanceTable"
+        );
+
 
     table.innerHTML = "";
 
@@ -453,12 +567,13 @@ async function loadAdmin() {
         const records =
             data.filter(function(item) {
 
-                return item.employee_name === employee;
+                return (
+                    item.employee_name ===
+                    employee
+                );
 
             });
 
-
-        /* LATEST RECORD */
 
         const record =
             records.length > 0
@@ -467,12 +582,48 @@ async function loadAdmin() {
 
 
         if (record && record.in_time) {
+
             present++;
+
         }
 
 
         const row =
             document.createElement("tr");
+
+
+        /* LOCATION BUTTON */
+
+        let locationHTML = "—";
+
+
+        if (
+            record &&
+            record.latitude !== null &&
+            record.longitude !== null
+        ) {
+
+            const lat =
+                record.latitude;
+
+            const lng =
+                record.longitude;
+
+
+            const mapURL =
+                "https://www.google.com/maps?q=" +
+                lat +
+                "," +
+                lng;
+
+
+            locationHTML =
+                '<a href="' +
+                mapURL +
+                '" target="_blank" rel="noopener noreferrer">' +
+                "📍 View Location" +
+                "</a>";
+        }
 
 
         row.innerHTML =
@@ -487,6 +638,10 @@ async function loadAdmin() {
 
             "<td>" +
             (record?.out_time || "—") +
+            "</td>" +
+
+            "<td>" +
+            locationHTML +
             "</td>";
 
 
@@ -495,7 +650,9 @@ async function loadAdmin() {
     });
 
 
-    document.getElementById("summary").innerText =
+    document.getElementById(
+        "summary"
+    ).innerText =
 
         "Present: " +
         present +
@@ -510,53 +667,91 @@ async function loadAdmin() {
 
 function exportCSV() {
 
-    alert(
-        "Export feature abhi add nahi kiya gaya."
-    );
-}
+    const table =
+        document.getElementById(
+            "attendanceTable"
+        );
 
 
-/* =========================
-   DATE & CLOCK
-========================= */
+    if (!table) {
 
-function updateDateTime() {
+        alert(
+            "Attendance data nahi mili."
+        );
 
-    const now = new Date();
-
-
-    const dateElement =
-        document.getElementById("date");
-
-    const timeElement =
-        document.getElementById("time");
-
-
-    if (dateElement) {
-
-        dateElement.innerText =
-            now.toLocaleDateString("en-IN", {
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
-            });
+        return;
     }
 
 
-    if (timeElement) {
+    let csv =
+        "Employee,IN,OUT,Latitude,Longitude,Accuracy\n";
 
-        timeElement.innerText =
-            now.toLocaleTimeString("en-IN", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true
-            });
-    }
+
+    const rows =
+        table.querySelectorAll("tr");
+
+
+    rows.forEach(function(row) {
+
+        const cells =
+            row.querySelectorAll("td");
+
+
+        if (cells.length >= 3) {
+
+            const employee =
+                cells[0].innerText;
+
+            const inTime =
+                cells[1].innerText;
+
+            const outTime =
+                cells[2].innerText;
+
+
+            csv +=
+                '"' +
+                employee +
+                '","' +
+                inTime +
+                '","' +
+                outTime +
+                '"\n';
+        }
+
+    });
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type: "text/csv"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+
+    a.href = url;
+
+    a.download =
+        "Saanvi_Motors_Attendance_" +
+        todayKey() +
+        ".csv";
+
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
 }
-
-
-setInterval(updateDateTime, 1000);
-
-updateDateTime();
