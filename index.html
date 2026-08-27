@@ -1,0 +1,664 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Saanvi Motors Attendance</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f6fa;
+    color: #172033;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 15px;
+}
+
+.header {
+    text-align: center;
+    padding: 25px 10px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.header p {
+    color: #667085;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 18px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 7px;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.date-time {
+    display: flex;
+    justify-content: space-between;
+    background: #f8f9fb;
+    padding: 14px;
+    margin-top: 15px;
+    border-radius: 10px;
+}
+
+.buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mark-in {
+    flex: 1;
+    background: #dff7e7;
+    color: #087443;
+}
+
+.mark-out {
+    flex: 1;
+    background: #ffe2e2;
+    color: #b42318;
+}
+
+.admin-btn {
+    width: 100%;
+    margin-top: 15px;
+    background: #172033;
+    color: white;
+}
+
+.status {
+    margin-top: 18px;
+    padding: 14px;
+    background: #f8f9fb;
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+.hidden {
+    display: none;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.tab {
+    flex: 1;
+    background: #edf1f5;
+}
+
+.tab.active {
+    background: #172033;
+    color: white;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.admin-header h2 {
+    margin: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    padding: 12px 7px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th {
+    font-size: 13px;
+    color: #667085;
+}
+
+.export {
+    background: #172033;
+    color: white;
+    padding: 10px;
+}
+
+.footer {
+    text-align: center;
+    color: #667085;
+    font-size: 12px;
+    padding: 15px;
+}
+
+@media(max-width:500px) {
+    .buttons {
+        flex-direction: column;
+    }
+
+    .date-time {
+        font-size: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+    <h1>SAANVI MOTORS</h1>
+    <p>Employee Attendance System</p>
+</div>
+
+<div class="card">
+
+<div class="tabs">
+    <button class="tab active" onclick="showEmployee()">EMPLOYEE</button>
+    <button class="tab" onclick="showAdmin()">ADMIN</button>
+</div>
+
+
+<!-- EMPLOYEE PANEL -->
+
+<div id="employeePanel">
+
+<label>Select Employee</label>
+
+<select id="employee">
+
+<option value="Rohit Kumar">Rohit Kumar</option>
+<option value="Abhishek Raj">Abhishek Raj</option>
+<option value="Gudiya Kumari">Gudiya Kumari</option>
+<option value="Farukh Alam">Farukh Alam</option>
+<option value="Neyaj Alam">Neyaj Alam</option>
+<option value="Sipahi Kumar">Sipahi Kumar</option>
+<option value="Chunnu Kumar">Chunnu Kumar</option>
+
+</select>
+
+<div class="date-time">
+
+<strong id="date"></strong>
+
+<span id="time"></span>
+
+</div>
+
+<div class="buttons">
+
+<button class="mark-in" onclick="markIn()">
+🟢 MARK IN
+</button>
+
+<button class="mark-out" onclick="markOut()">
+🔴 MARK OUT
+</button>
+
+</div>
+
+<div class="status" id="status">
+Today's attendance has not been marked.
+</div>
+
+</div>
+
+
+<!-- ADMIN PANEL -->
+
+<div id="adminPanel" class="hidden">
+
+<label>Admin Password</label>
+
+<input
+type="password"
+id="adminPassword"
+placeholder="Enter password">
+
+<button class="admin-btn" onclick="loginAdmin()">
+ADMIN LOGIN
+</button>
+
+
+<div id="adminArea" class="hidden">
+
+<div class="admin-header">
+
+<h2>Today's Attendance</h2>
+
+<button class="export" onclick="exportCSV()">
+EXPORT
+</button>
+
+</div>
+
+<p id="summary"></p>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Employee</th>
+<th>IN</th>
+<th>OUT</th>
+</tr>
+
+</thead>
+
+<tbody id="attendanceTable">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+Saanvi Motors • Attendance System
+</div>
+
+</div>
+
+
+<script>
+
+const employees = [
+"Rohit Kumar",
+"Abhishek Raj",
+"Gudiya Kumari",
+"Farukh Alam",
+"Neyaj Alam",
+"Sipahi Kumar",
+"Chunnu Kumar"
+];
+
+/*
+CHANGE THIS PASSWORD
+*/
+
+const ADMIN_PASSWORD = "saanvi123";
+
+const STORAGE_KEY = "saanvi_attendance";
+
+
+function todayKey() {
+
+    const d = new Date();
+
+    return d.getFullYear() + "-" +
+           String(d.getMonth()+1).padStart(2,"0") + "-" +
+           String(d.getDate()).padStart(2,"0");
+
+}
+
+
+function getData() {
+
+    return JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+
+}
+
+
+function saveData(data) {
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+
+}
+
+
+function currentTime() {
+
+    return new Date().toLocaleTimeString(
+        "en-IN",
+        {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        }
+    );
+
+}
+
+
+function updateClock() {
+
+    const d = new Date();
+
+    document.getElementById("date").innerText =
+        d.toLocaleDateString("en-IN");
+
+    document.getElementById("time").innerText =
+        currentTime();
+
+}
+
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+
+function markIn() {
+
+    const name =
+        document.getElementById("employee").value;
+
+    const data = getData();
+
+    const date = todayKey();
+
+    if(!data[date]) {
+
+        data[date] = {};
+
+    }
+
+    if(!data[date][name]) {
+
+        data[date][name] = {};
+
+    }
+
+    if(data[date][name].in) {
+
+        alert("IN already marked for today.");
+
+        return;
+
+    }
+
+    data[date][name].in = currentTime();
+
+    saveData(data);
+
+    showStatus();
+
+}
+
+
+function markOut() {
+
+    const name =
+        document.getElementById("employee").value;
+
+    const data = getData();
+
+    const date = todayKey();
+
+    if(!data[date]) {
+
+        data[date] = {};
+
+    }
+
+    if(!data[date][name]) {
+
+        data[date][name] = {};
+
+    }
+
+    if(!data[date][name].in) {
+
+        alert("Please MARK IN first.");
+
+        return;
+
+    }
+
+    if(data[date][name].out) {
+
+        alert("OUT already marked for today.");
+
+        return;
+
+    }
+
+    data[date][name].out = currentTime();
+
+    saveData(data);
+
+    showStatus();
+
+}
+
+
+function showStatus() {
+
+    const name =
+        document.getElementById("employee").value;
+
+    const data = getData();
+
+    const date = todayKey();
+
+    const record =
+        data[date]?.[name];
+
+    if(!record) {
+
+        document.getElementById("status").innerHTML =
+            "Today's attendance has not been marked.";
+
+        return;
+
+    }
+
+    document.getElementById("status").innerHTML =
+
+        "Employee: <b>" + name + "</b><br>" +
+
+        "IN: <b>" + (record.in || "—") + "</b><br>" +
+
+        "OUT: <b>" + (record.out || "—") + "</b>";
+
+}
+
+
+document
+.getElementById("employee")
+.addEventListener("change",showStatus);
+
+
+function showEmployee() {
+
+    document
+    .getElementById("employeePanel")
+    .classList.remove("hidden");
+
+    document
+    .getElementById("adminPanel")
+    .classList.add("hidden");
+
+}
+
+
+function showAdmin() {
+
+    document
+    .getElementById("employeePanel")
+    .classList.add("hidden");
+
+    document
+    .getElementById("adminPanel")
+    .classList.remove("hidden");
+
+}
+
+
+function loginAdmin() {
+
+    const password =
+        document.getElementById("adminPassword").value;
+
+    if(password !== ADMIN_PASSWORD) {
+
+        alert("Wrong password.");
+
+        return;
+
+    }
+
+    document
+    .getElementById("adminArea")
+    .classList.remove("hidden");
+
+    loadAdmin();
+
+}
+
+
+function loadAdmin() {
+
+    const data = getData();
+
+    const date = todayKey();
+
+    const today = data[date] || {};
+
+    const table =
+        document.getElementById("attendanceTable");
+
+    table.innerHTML = "";
+
+    let present = 0;
+
+    employees.forEach(name => {
+
+        const record =
+            today[name] || {};
+
+        if(record.in) {
+
+            present++;
+
+        }
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML =
+
+            "<td>" + name + "</td>" +
+
+            "<td>" + (record.in || "—") + "</td>" +
+
+            "<td>" + (record.out || "—") + "</td>";
+
+        table.appendChild(row);
+
+    });
+
+    document.getElementById("summary").innerText =
+
+        "Present: " +
+        present +
+        " / " +
+        employees.length;
+
+}
+
+
+function exportCSV() {
+
+    const data = getData();
+
+    const date = todayKey();
+
+    const today = data[date] || {};
+
+    let csv =
+        "Employee,IN,OUT\n";
+
+    employees.forEach(name => {
+
+        const record =
+            today[name] || {};
+
+        csv +=
+            '"' + name + '",' +
+            '"' + (record.in || "") + '",' +
+            '"' + (record.out || "") + '"\n';
+
+    });
+
+    const blob =
+        new Blob([csv], {type:"text/csv"});
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "Saanvi-Motors-Attendance-" +
+        date +
+        ".csv";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+</script>
+
+</body>
+</html>
+```
