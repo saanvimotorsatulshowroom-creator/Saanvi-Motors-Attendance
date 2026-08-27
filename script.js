@@ -21,7 +21,7 @@ const employees = [
     "Chunnu Kumar"
 ];
 
-const ADMIN_PASSWORD = "saanvi123";
+const ADMIN_PASSWORD = "SAHITHI123";
 
 
 /* =========================
