@@ -146,8 +146,7 @@
             min-width: 700px;
         }
 
-        th,
-        td {
+        th, td {
             border: 1px solid #e5e7eb;
             padding: 11px;
             text-align: left;
@@ -210,31 +209,23 @@
 
 <div class="container">
 
-    <!-- HEADER -->
     <div class="header">
         <h1>Saanvi Motors Attendance</h1>
         <div id="date">Loading date...</div>
         <div id="time">Loading time...</div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs">
-        <button
-            id="employeeTab"
-            class="tab-btn active"
-            onclick="showEmployee()">
+        <button id="employeeTab" class="tab-btn active" onclick="showEmployee()">
             Employee
         </button>
 
-        <button
-            id="adminTab"
-            class="tab-btn"
-            onclick="showAdmin()">
+        <button id="adminTab" class="tab-btn" onclick="showAdmin()">
             Admin
         </button>
     </div>
 
-    <!-- ================= EMPLOYEE ================= -->
+    <!-- EMPLOYEE -->
 
     <div id="employeePanel">
 
@@ -255,9 +246,7 @@
                 inputmode="numeric"
                 autocomplete="off">
 
-            <button
-                class="primary"
-                onclick="employeeLogin()">
+            <button class="primary" onclick="employeeLogin()">
                 Login
             </button>
 
@@ -283,23 +272,17 @@
 
             <div class="action-buttons">
 
-                <button
-                    class="success"
-                    onclick="markIn()">
+                <button class="success" onclick="markIn()">
                     🟢 MARK IN
                 </button>
 
-                <button
-                    class="danger"
-                    onclick="markOut()">
+                <button class="danger" onclick="markOut()">
                     🔴 MARK OUT
                 </button>
 
             </div>
 
-            <button
-                class="secondary logout"
-                onclick="employeeLogout()">
+            <button class="secondary logout" onclick="employeeLogout()">
                 Logout
             </button>
 
@@ -308,7 +291,7 @@
     </div>
 
 
-    <!-- ================= ADMIN ================= -->
+    <!-- ADMIN -->
 
     <div id="adminPanel" class="hidden">
 
@@ -322,36 +305,27 @@
                 placeholder="Admin Password"
                 autocomplete="off">
 
-            <button
-                class="primary"
-                onclick="loginAdmin()">
+            <button class="primary" onclick="loginAdmin()">
                 Admin Login
             </button>
 
         </div>
 
-
         <div id="adminArea" class="card hidden">
 
             <h2>Today's Attendance</h2>
 
-            <div
-                id="summary"
-                class="summary">
+            <div id="summary" class="summary">
                 Loading...
             </div>
 
             <div class="admin-actions">
 
-                <button
-                    class="primary"
-                    onclick="loadAdmin()">
+                <button class="primary" onclick="loadAdmin()">
                     🔄 Refresh
                 </button>
 
-                <button
-                    class="success"
-                    onclick="exportCSV()">
+                <button class="success" onclick="exportCSV()">
                     📥 Export CSV
                 </button>
 
@@ -380,7 +354,7 @@
             </div>
 
             <p class="note">
-                Employee list employees table se automatically load hoti hai.
+                Employee list database se automatically load hoti hai.
             </p>
 
         </div>
@@ -415,12 +389,11 @@ const supabaseClient =
 
 const ADMIN_PASSWORD = "sahithi123";
 
-
 let currentEmployee = null;
 
 
 /* =====================================================
-   DATE
+   TODAY
 ===================================================== */
 
 function todayKey() {
@@ -438,7 +411,7 @@ function todayKey() {
 
 
 /* =====================================================
-   TIME
+   CURRENT TIME
 ===================================================== */
 
 function currentTime() {
@@ -455,16 +428,13 @@ function currentTime() {
 
 
 /* =====================================================
-   DATE & TIME
+   DATE / TIME
 ===================================================== */
 
 function updateDateTime() {
 
-    const date =
-        document.getElementById("date");
-
-    const time =
-        document.getElementById("time");
+    const date = document.getElementById("date");
+    const time = document.getElementById("time");
 
     if (date) {
 
@@ -549,18 +519,17 @@ function showAdmin() {
 
 async function employeeLogin() {
 
+    const codeInput =
+        document.getElementById("employeeCode");
+
+    const pinInput =
+        document.getElementById("employeePin");
+
     const code =
-        document
-            .getElementById("employeeCode")
-            .value
-            .trim()
-            .toUpperCase();
+        codeInput.value.trim().toUpperCase();
 
     const pin =
-        document
-            .getElementById("employeePin")
-            .value
-            .trim();
+        pinInput.value.trim();
 
 
     if (!code || !pin) {
@@ -573,13 +542,19 @@ async function employeeLogin() {
     }
 
 
+    /*
+       Employee ID ko case-insensitive banaya gaya hai.
+       Isliye ABHINANDAN / abhinandan / Abhinandan
+       sab kaam karega.
+    */
+
     const {
         data,
         error
     } = await supabaseClient
         .from("employees")
         .select("*")
-        .eq(
+        .ilike(
             "employee_code",
             code
         )
@@ -588,7 +563,10 @@ async function employeeLogin() {
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Employee Login Error:",
+            error
+        );
 
         alert(
             "Database error: " +
@@ -599,12 +577,11 @@ async function employeeLogin() {
     }
 
 
-    if (
-        !data ||
-        data.length === 0
-    ) {
+    if (!data || data.length === 0) {
 
-        alert("Invalid Employee ID.");
+        alert(
+            "Invalid Employee ID."
+        );
 
         return;
     }
@@ -613,12 +590,18 @@ async function employeeLogin() {
     const employee = data[0];
 
 
+    /*
+       PIN check
+    */
+
     if (
-        String(employee.pin) !==
-        String(pin)
+        String(employee.pin || "").trim() !==
+        String(pin).trim()
     ) {
 
-        alert("Wrong PIN.");
+        alert(
+            "Wrong PIN."
+        );
 
         return;
     }
@@ -630,7 +613,6 @@ async function employeeLogin() {
     document
         .getElementById("employeeLogin")
         .classList.add("hidden");
-
 
     document
         .getElementById("employeeArea")
@@ -686,7 +668,7 @@ function employeeLogout() {
 
 
 /* =====================================================
-   STATUS
+   ATTENDANCE STATUS
 ===================================================== */
 
 async function showStatus() {
@@ -780,7 +762,7 @@ async function showStatus() {
 
 
 /* =====================================================
-   MARK IN
+   MARK IN + GPS
 ===================================================== */
 
 async function markIn() {
@@ -1128,7 +1110,6 @@ async function loginAdmin() {
 
 /* =====================================================
    ADMIN DATA
-   Employee list database se automatically load hogi.
 ===================================================== */
 
 async function loadAdmin() {
@@ -1436,8 +1417,7 @@ async function exportCSV() {
         document.createElement("a");
 
 
-    link.href =
-        url;
+    link.href = url;
 
 
     link.download =
