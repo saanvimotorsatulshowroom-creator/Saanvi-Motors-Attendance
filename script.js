@@ -585,6 +585,7 @@ async function loadAdmin() {
         "Neyaj Alam",
         "Sipahi Kumar",
         "Chunnu Kumar"
+         "abhinandan singh"
     ];
 
 
