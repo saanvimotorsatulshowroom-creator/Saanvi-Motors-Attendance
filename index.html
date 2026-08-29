@@ -1,10 +1,21 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Saanvi Motors Attendance</title>
 
+    <!-- APP / PWA SETUP -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#111827">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Saanvi Attendance">
+
+    <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -100,6 +111,13 @@
             color: white;
         }
 
+        .install {
+            background: #111827;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -146,7 +164,8 @@
             min-width: 700px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #e5e7eb;
             padding: 11px;
             text-align: left;
@@ -209,23 +228,65 @@
 
 <div class="container">
 
+    <!-- HEADER -->
+
     <div class="header">
+
         <h1>Saanvi Motors Attendance</h1>
-        <div id="date">Loading date...</div>
-        <div id="time">Loading time...</div>
+
+        <div id="date">
+            Loading date...
+        </div>
+
+        <div id="time">
+            Loading time...
+        </div>
+
     </div>
+
+
+    <!-- INSTALL APP BUTTON -->
+
+    <div id="installCard" class="card hidden">
+
+        <button
+            id="installButton"
+            class="install"
+            onclick="installApp()">
+
+            📱 Install Saanvi Motors App
+
+        </button>
+
+    </div>
+
+
+    <!-- TABS -->
 
     <div class="tabs">
-        <button id="employeeTab" class="tab-btn active" onclick="showEmployee()">
+
+        <button
+            id="employeeTab"
+            class="tab-btn active"
+            onclick="showEmployee()">
+
             Employee
+
         </button>
 
-        <button id="adminTab" class="tab-btn" onclick="showAdmin()">
+        <button
+            id="adminTab"
+            class="tab-btn"
+            onclick="showAdmin()">
+
             Admin
+
         </button>
+
     </div>
 
-    <!-- EMPLOYEE -->
+
+    <!-- ================= EMPLOYEE ================= -->
 
     <div id="employeePanel">
 
@@ -246,11 +307,16 @@
                 inputmode="numeric"
                 autocomplete="off">
 
-            <button class="primary" onclick="employeeLogin()">
+            <button
+                class="primary"
+                onclick="employeeLogin()">
+
                 Login
+
             </button>
 
         </div>
+
 
         <div id="employeeArea" class="card hidden">
 
@@ -266,24 +332,41 @@
 
             </div>
 
+
             <div id="status">
+
                 Aaj attendance mark nahi hui.
+
             </div>
+
 
             <div class="action-buttons">
 
-                <button class="success" onclick="markIn()">
+                <button
+                    class="success"
+                    onclick="markIn()">
+
                     🟢 MARK IN
+
                 </button>
 
-                <button class="danger" onclick="markOut()">
+                <button
+                    class="danger"
+                    onclick="markOut()">
+
                     🔴 MARK OUT
+
                 </button>
 
             </div>
 
-            <button class="secondary logout" onclick="employeeLogout()">
+
+            <button
+                class="secondary logout"
+                onclick="employeeLogout()">
+
                 Logout
+
             </button>
 
         </div>
@@ -291,7 +374,7 @@
     </div>
 
 
-    <!-- ADMIN -->
+    <!-- ================= ADMIN ================= -->
 
     <div id="adminPanel" class="hidden">
 
@@ -305,31 +388,50 @@
                 placeholder="Admin Password"
                 autocomplete="off">
 
-            <button class="primary" onclick="loginAdmin()">
+            <button
+                class="primary"
+                onclick="loginAdmin()">
+
                 Admin Login
+
             </button>
 
         </div>
+
 
         <div id="adminArea" class="card hidden">
 
             <h2>Today's Attendance</h2>
 
-            <div id="summary" class="summary">
+            <div
+                id="summary"
+                class="summary">
+
                 Loading...
+
             </div>
+
 
             <div class="admin-actions">
 
-                <button class="primary" onclick="loadAdmin()">
+                <button
+                    class="primary"
+                    onclick="loadAdmin()">
+
                     🔄 Refresh
+
                 </button>
 
-                <button class="success" onclick="exportCSV()">
+                <button
+                    class="success"
+                    onclick="exportCSV()">
+
                     📥 Export CSV
+
                 </button>
 
             </div>
+
 
             <div class="table-wrapper">
 
@@ -338,11 +440,13 @@
                     <thead>
 
                         <tr>
+
                             <th>Employee</th>
                             <th>Employee ID</th>
                             <th>IN</th>
                             <th>OUT</th>
                             <th>Location</th>
+
                         </tr>
 
                     </thead>
@@ -353,8 +457,11 @@
 
             </div>
 
+
             <p class="note">
+
                 Employee list database se automatically load hoti hai.
+
             </p>
 
         </div>
@@ -389,11 +496,121 @@ const supabaseClient =
 
 const ADMIN_PASSWORD = "sahithi123";
 
+
 let currentEmployee = null;
 
 
 /* =====================================================
-   TODAY
+   PWA INSTALL
+===================================================== */
+
+let deferredInstallPrompt = null;
+
+
+window.addEventListener(
+    "beforeinstallprompt",
+    function(event) {
+
+        event.preventDefault();
+
+        deferredInstallPrompt = event;
+
+        document
+            .getElementById("installCard")
+            .classList.remove("hidden");
+    }
+);
+
+
+async function installApp() {
+
+    if (!deferredInstallPrompt) {
+
+        alert(
+            "Browser menu se 'Install App' ya 'Add to Home Screen' select karo."
+        );
+
+        return;
+    }
+
+
+    deferredInstallPrompt.prompt();
+
+
+    const result =
+        await deferredInstallPrompt.userChoice;
+
+
+    console.log(
+        "Install result:",
+        result.outcome
+    );
+
+
+    deferredInstallPrompt = null;
+
+
+    document
+        .getElementById("installCard")
+        .classList.add("hidden");
+}
+
+
+window.addEventListener(
+    "appinstalled",
+    function() {
+
+        document
+            .getElementById("installCard")
+            .classList.add("hidden");
+
+        console.log(
+            "Saanvi Motors App installed."
+        );
+    }
+);
+
+
+/* =====================================================
+   SERVICE WORKER
+===================================================== */
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener(
+        "load",
+        function() {
+
+            navigator.serviceWorker
+                .register("./sw.js")
+                .then(
+                    function() {
+
+                        console.log(
+                            "Saanvi Motors Attendance App Ready"
+                        );
+
+                    }
+                )
+                .catch(
+                    function(error) {
+
+                        console.error(
+                            "Service Worker Error:",
+                            error
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   DATE
 ===================================================== */
 
 function todayKey() {
@@ -411,7 +628,7 @@ function todayKey() {
 
 
 /* =====================================================
-   CURRENT TIME
+   TIME
 ===================================================== */
 
 function currentTime() {
@@ -428,13 +645,17 @@ function currentTime() {
 
 
 /* =====================================================
-   DATE / TIME
+   DATE & TIME
 ===================================================== */
 
 function updateDateTime() {
 
-    const date = document.getElementById("date");
-    const time = document.getElementById("time");
+    const date =
+        document.getElementById("date");
+
+    const time =
+        document.getElementById("time");
+
 
     if (date) {
 
@@ -448,7 +669,9 @@ function updateDateTime() {
                     year: "numeric"
                 }
             );
+
     }
+
 
     if (time) {
 
@@ -462,10 +685,17 @@ function updateDateTime() {
                     hour12: true
                 }
             );
+
     }
+
 }
 
-setInterval(updateDateTime, 1000);
+
+setInterval(
+    updateDateTime,
+    1000
+);
+
 updateDateTime();
 
 
@@ -490,6 +720,7 @@ function showEmployee() {
     document
         .getElementById("adminTab")
         .classList.remove("active");
+
 }
 
 
@@ -510,6 +741,7 @@ function showAdmin() {
     document
         .getElementById("adminTab")
         .classList.add("active");
+
 }
 
 
@@ -519,17 +751,19 @@ function showAdmin() {
 
 async function employeeLogin() {
 
-    const codeInput =
-        document.getElementById("employeeCode");
-
-    const pinInput =
-        document.getElementById("employeePin");
-
     const code =
-        codeInput.value.trim().toUpperCase();
+        document
+            .getElementById("employeeCode")
+            .value
+            .trim()
+            .toUpperCase();
+
 
     const pin =
-        pinInput.value.trim();
+        document
+            .getElementById("employeePin")
+            .value
+            .trim();
 
 
     if (!code || !pin) {
@@ -542,29 +776,24 @@ async function employeeLogin() {
     }
 
 
-    /*
-       Employee ID ko case-insensitive banaya gaya hai.
-       Isliye ABHINANDAN / abhinandan / Abhinandan
-       sab kaam karega.
-    */
-
     const {
         data,
         error
-    } = await supabaseClient
-        .from("employees")
-        .select("*")
-        .ilike(
-            "employee_code",
-            code
-        )
-        .limit(1);
+    } =
+        await supabaseClient
+            .from("employees")
+            .select("*")
+            .ilike(
+                "employee_code",
+                code
+            )
+            .limit(1);
 
 
     if (error) {
 
         console.error(
-            "Employee Login Error:",
+            "Login Error:",
             error
         );
 
@@ -577,7 +806,10 @@ async function employeeLogin() {
     }
 
 
-    if (!data || data.length === 0) {
+    if (
+        !data ||
+        data.length === 0
+    ) {
 
         alert(
             "Invalid Employee ID."
@@ -587,12 +819,9 @@ async function employeeLogin() {
     }
 
 
-    const employee = data[0];
+    const employee =
+        data[0];
 
-
-    /*
-       PIN check
-    */
 
     if (
         String(employee.pin || "").trim() !==
@@ -607,12 +836,14 @@ async function employeeLogin() {
     }
 
 
-    currentEmployee = employee;
+    currentEmployee =
+        employee;
 
 
     document
         .getElementById("employeeLogin")
         .classList.add("hidden");
+
 
     document
         .getElementById("employeeArea")
@@ -633,6 +864,7 @@ async function employeeLogin() {
 
 
     await showStatus();
+
 }
 
 
@@ -644,41 +876,51 @@ function employeeLogout() {
 
     currentEmployee = null;
 
+
     document
         .getElementById("employeeArea")
         .classList.add("hidden");
+
 
     document
         .getElementById("employeeLogin")
         .classList.remove("hidden");
 
+
     document
         .getElementById("employeeCode")
         .value = "";
+
 
     document
         .getElementById("employeePin")
         .value = "";
 
+
     document
         .getElementById("status")
         .innerText =
         "Aaj attendance mark nahi hui.";
+
 }
 
 
 /* =====================================================
-   ATTENDANCE STATUS
+   STATUS
 ===================================================== */
 
 async function showStatus() {
 
     if (!currentEmployee) {
+
         return;
+
     }
+
 
     const status =
         document.getElementById("status");
+
 
     status.innerText =
         "Checking attendance...";
@@ -687,24 +929,25 @@ async function showStatus() {
     const {
         data,
         error
-    } = await supabaseClient
-        .from("ATTENDANCE")
-        .select("*")
-        .eq(
-            "employee_name",
-            currentEmployee.employee_name
-        )
-        .eq(
-            "attendance_date",
-            todayKey()
-        )
-        .order(
-            "id",
-            {
-                ascending: false
-            }
-        )
-        .limit(1);
+    } =
+        await supabaseClient
+            .from("ATTENDANCE")
+            .select("*")
+            .eq(
+                "employee_name",
+                currentEmployee.employee_name
+            )
+            .eq(
+                "attendance_date",
+                todayKey()
+            )
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
+            )
+            .limit(1);
 
 
     if (error) {
@@ -744,7 +987,9 @@ async function showStatus() {
             " | OUT: " +
             record.out_time;
 
-    } else if (
+    }
+
+    else if (
         record.in_time
     ) {
 
@@ -753,16 +998,20 @@ async function showStatus() {
             record.in_time +
             " | OUT abhi nahi hua.";
 
-    } else {
+    }
+
+    else {
 
         status.innerText =
             "Aaj attendance mark nahi hui.";
+
     }
+
 }
 
 
 /* =====================================================
-   MARK IN + GPS
+   MARK IN
 ===================================================== */
 
 async function markIn() {
@@ -884,6 +1133,7 @@ async function markIn() {
 
                         accuracy:
                             accuracy
+
                     });
 
 
@@ -906,13 +1156,16 @@ async function markIn() {
                 "🟢 MARK IN successfully ho gaya."
             );
 
+
             await showStatus();
 
         },
 
+
         function(error) {
 
             console.error(error);
+
 
             if (error.code === 1) {
 
@@ -920,32 +1173,43 @@ async function markIn() {
                     "Location permission Allow karo."
                 );
 
-            } else if (error.code === 2) {
+            }
+
+            else if (error.code === 2) {
 
                 alert(
                     "Phone ka GPS/Location ON karo."
                 );
 
-            } else if (error.code === 3) {
+            }
+
+            else if (error.code === 3) {
 
                 alert(
                     "Location timeout. Dobara try karo."
                 );
 
-            } else {
+            }
+
+            else {
 
                 alert(
                     "Location error."
                 );
+
             }
+
         },
+
 
         {
             enableHighAccuracy: true,
             timeout: 15000,
             maximumAge: 0
         }
+
     );
+
 }
 
 
@@ -1037,8 +1301,10 @@ async function markOut() {
         await supabaseClient
             .from("ATTENDANCE")
             .update({
+
                 out_time:
                     currentTime()
+
             })
             .eq(
                 "id",
@@ -1065,7 +1331,9 @@ async function markOut() {
         "🔴 MARK OUT successfully ho gaya."
     );
 
+
     await showStatus();
+
 }
 
 
@@ -1105,6 +1373,7 @@ async function loginAdmin() {
 
 
     await loadAdmin();
+
 }
 
 
@@ -1201,6 +1470,7 @@ async function loadAdmin() {
                             item.employee_name ===
                             employee.employee_name
                         );
+
                     }
                 );
 
@@ -1219,6 +1489,7 @@ async function loadAdmin() {
             ) {
 
                 present++;
+
             }
 
 
@@ -1245,6 +1516,7 @@ async function loadAdmin() {
                     '" target="_blank" rel="noopener noreferrer">' +
                     "📍 View Location" +
                     "</a>";
+
             }
 
 
@@ -1288,6 +1560,7 @@ async function loadAdmin() {
 
 
             table.appendChild(row);
+
         }
     );
 
@@ -1299,6 +1572,7 @@ async function loadAdmin() {
         present +
         " / " +
         (employees || []).length;
+
 }
 
 
@@ -1334,6 +1608,7 @@ function escapeHTML(value) {
             /'/g,
             "&#039;"
         );
+
 }
 
 
@@ -1396,6 +1671,7 @@ async function exportCSV() {
                 '","' +
                 (record.accuracy || "") +
                 '"\n';
+
         }
     );
 
@@ -1433,9 +1709,11 @@ async function exportCSV() {
     document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
+
 }
 
 </script>
 
 </body>
 </html>
+```
