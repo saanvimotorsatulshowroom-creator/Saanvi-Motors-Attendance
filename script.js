@@ -1,12 +1,14 @@
-const SUPABASE_URL = "https://edcrxbzpubjmyeecrbfd.supabase.co";
+const SUPABASE_URL =
+    "https://edcrxbzpubjmyeecrbfd.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_Yn2d81cVel9qO_2y_p4kSg_DqxB1U1o";
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =====================================================
@@ -19,7 +21,7 @@ let currentEmployee = null;
 
 
 /* =====================================================
-   DATE & TIME
+   DATE
 ===================================================== */
 
 function todayKey() {
@@ -36,6 +38,10 @@ function todayKey() {
 }
 
 
+/* =====================================================
+   CURRENT TIME
+===================================================== */
+
 function currentTime() {
 
     return new Date().toLocaleTimeString(
@@ -50,18 +56,22 @@ function currentTime() {
 }
 
 
+/* =====================================================
+   DATE & TIME DISPLAY
+===================================================== */
+
 function updateDateTime() {
 
-    const dateElement =
+    const date =
         document.getElementById("date");
 
-    const timeElement =
+    const time =
         document.getElementById("time");
 
 
-    if (dateElement) {
+    if (date) {
 
-        dateElement.innerText =
+        date.innerText =
             new Date().toLocaleDateString(
                 "en-IN",
                 {
@@ -74,9 +84,9 @@ function updateDateTime() {
     }
 
 
-    if (timeElement) {
+    if (time) {
 
-        timeElement.innerText =
+        time.innerText =
             new Date().toLocaleTimeString(
                 "en-IN",
                 {
@@ -90,7 +100,10 @@ function updateDateTime() {
 }
 
 
-setInterval(updateDateTime, 1000);
+setInterval(
+    updateDateTime,
+    1000
+);
 
 updateDateTime();
 
@@ -143,6 +156,7 @@ function showAdmin() {
 
 /* =====================================================
    EMPLOYEE LOGIN
+   CASE-INSENSITIVE EMPLOYEE ID
 ===================================================== */
 
 async function employeeLogin() {
@@ -151,8 +165,7 @@ async function employeeLogin() {
         document
             .getElementById("employeeCode")
             .value
-            .trim()
-            .toUpperCase();
+            .trim();
 
 
     const pin =
@@ -175,14 +188,15 @@ async function employeeLogin() {
     const {
         data,
         error
-    } = await supabaseClient
-        .from("employees")
-        .select("*")
-        .eq(
-            "employee_code",
-            code
-        )
-        .limit(1);
+    } =
+        await supabaseClient
+            .from("employees")
+            .select("*")
+            .ilike(
+                "employee_code",
+                code
+            )
+            .limit(1);
 
 
     if (error) {
@@ -198,7 +212,10 @@ async function employeeLogin() {
     }
 
 
-    if (!data || data.length === 0) {
+    if (
+        !data ||
+        data.length === 0
+    ) {
 
         alert(
             "Invalid Employee ID."
@@ -208,12 +225,13 @@ async function employeeLogin() {
     }
 
 
-    const employee = data[0];
+    const employee =
+        data[0];
 
 
     if (
-        String(employee.pin) !==
-        String(pin)
+        String(employee.pin).trim() !==
+        String(pin).trim()
     ) {
 
         alert(
@@ -224,7 +242,8 @@ async function employeeLogin() {
     }
 
 
-    currentEmployee = employee;
+    currentEmployee =
+        employee;
 
 
     document
@@ -291,7 +310,7 @@ function employeeLogout() {
 
 
 /* =====================================================
-   SHOW ATTENDANCE STATUS
+   SHOW STATUS
 ===================================================== */
 
 async function showStatus() {
@@ -312,24 +331,25 @@ async function showStatus() {
     const {
         data,
         error
-    } = await supabaseClient
-        .from("ATTENDANCE")
-        .select("*")
-        .eq(
-            "employee_name",
-            currentEmployee.employee_name
-        )
-        .eq(
-            "attendance_date",
-            todayKey()
-        )
-        .order(
-            "id",
-            {
-                ascending: false
-            }
-        )
-        .limit(1);
+    } =
+        await supabaseClient
+            .from("ATTENDANCE")
+            .select("*")
+            .eq(
+                "employee_name",
+                currentEmployee.employee_name
+            )
+            .eq(
+                "attendance_date",
+                todayKey()
+            )
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
+            )
+            .limit(1);
 
 
     if (error) {
@@ -426,6 +446,8 @@ async function markIn() {
                 position.coords.accuracy;
 
 
+            /* CHECK EXISTING ATTENDANCE */
+
             const {
                 data,
                 error
@@ -481,6 +503,8 @@ async function markIn() {
                 return;
             }
 
+
+            /* SAVE ATTENDANCE */
 
             const {
                 error: insertError
@@ -741,7 +765,7 @@ async function loginAdmin() {
 
 /* =====================================================
    ADMIN DATA
-   Employees table se automatically load honge.
+   EMPLOYEE LIST DATABASE SE LOAD
 ===================================================== */
 
 async function loadAdmin() {
@@ -854,7 +878,8 @@ async function loadAdmin() {
             }
 
 
-            let locationHTML = "—";
+            let locationHTML =
+                "—";
 
 
             if (
@@ -1015,19 +1040,33 @@ async function exportCSV() {
 
             csv +=
                 '"' +
-                csvSafe(record.employee_name) +
+                csvSafe(
+                    record.employee_name
+                ) +
                 '","' +
-                csvSafe(record.attendance_date) +
+                csvSafe(
+                    record.attendance_date
+                ) +
                 '","' +
-                csvSafe(record.in_time) +
+                csvSafe(
+                    record.in_time
+                ) +
                 '","' +
-                csvSafe(record.out_time) +
+                csvSafe(
+                    record.out_time
+                ) +
                 '","' +
-                csvSafe(record.latitude) +
+                csvSafe(
+                    record.latitude
+                ) +
                 '","' +
-                csvSafe(record.longitude) +
+                csvSafe(
+                    record.longitude
+                ) +
                 '","' +
-                csvSafe(record.accuracy) +
+                csvSafe(
+                    record.accuracy
+                ) +
                 '"\n';
         }
     );
@@ -1037,17 +1076,22 @@ async function exportCSV() {
         new Blob(
             [csv],
             {
-                type: "text/csv;charset=utf-8;"
+                type:
+                    "text/csv;charset=utf-8;"
             }
         );
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
     link.href = url;
@@ -1059,19 +1103,27 @@ async function exportCSV() {
         ".csv";
 
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        link
+    );
+
 
     link.click();
 
-    document.body.removeChild(link);
+
+    document.body.removeChild(
+        link
+    );
 
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+        url
+    );
 }
 
 
 /* =====================================================
-   CSV SAFE VALUE
+   CSV SAFE
 ===================================================== */
 
 function csvSafe(value) {
@@ -1086,5 +1138,8 @@ function csvSafe(value) {
 
 
     return String(value)
-        .replace(/"/g, '""');
+        .replace(
+            /"/g,
+            '""'
+        );
 }
