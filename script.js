@@ -194,25 +194,39 @@ async function showStatus() {
     const { data, error } = await supabaseClient
         .from("ATTENDANCE")
         .select("*")
-        .eq("employee_name", currentEmployee.employee_name)
-        .eq("attendance_date", todayKey())
-        .order("id", { ascending: false })
+        .eq(
+            "employee_name",
+            currentEmployee.employee_name
+        )
+        .eq(
+            "attendance_date",
+            todayKey()
+        )
+        .order(
+            "id",
+            { ascending: false }
+        )
         .limit(1);
 
     if (error) {
 
         console.error(error);
 
-        status.innerText = "Attendance status load nahi hui.";
+        status.innerText =
+            "Attendance status load nahi hui.";
 
         return;
     }
 
-    const record = data && data.length ? data[0] : null;
+    const record =
+        data && data.length
+            ? data[0]
+            : null;
 
     if (!record) {
 
-        status.innerText = "Aaj attendance mark nahi hui.";
+        status.innerText =
+            "Aaj attendance mark nahi hui.";
 
         return;
     }
@@ -231,13 +245,14 @@ async function showStatus() {
 
     } else {
 
-        status.innerText = "Aaj attendance mark nahi hui.";
+        status.innerText =
+            "Aaj attendance mark nahi hui.";
     }
 }
 
 
 /* =========================
-   MARK IN
+   MARK IN + GPS
 ========================= */
 
 async function markIn() {
@@ -251,7 +266,9 @@ async function markIn() {
 
     if (!navigator.geolocation) {
 
-        alert("Is phone/browser me Location available nahi hai.");
+        alert(
+            "Is phone/browser me Location available nahi hai."
+        );
 
         return;
     }
@@ -577,6 +594,10 @@ async function loadAdmin() {
     table.innerHTML = "";
 
 
+    /* =========================
+       EMPLOYEE LIST
+    ========================= */
+
     const employeeList = [
         "Rohit Kumar",
         "Abhishek Raj",
@@ -584,8 +605,8 @@ async function loadAdmin() {
         "Farukh Alam",
         "Neyaj Alam",
         "Sipahi Kumar",
-        "Chunnu Kumar"
-         "abhinandan singh"
+        "Chunnu Kumar",
+        "Abhinandan Singh"
     ];
 
 
@@ -598,7 +619,9 @@ async function loadAdmin() {
             const records =
                 data.filter(
                     function(item) {
-                        return item.employee_name === employeeName;
+
+                        return item.employee_name ===
+                            employeeName;
                     }
                 );
 
@@ -610,6 +633,7 @@ async function loadAdmin() {
 
 
             if (record && record.in_time) {
+
                 present++;
             }
 
@@ -714,13 +738,21 @@ async function exportCSV() {
         function(record) {
 
             csv +=
-                '"' + record.employee_name + '","' +
-                record.attendance_date + '","' +
-                (record.in_time || "") + '","' +
-                (record.out_time || "") + '","' +
-                (record.latitude || "") + '","' +
-                (record.longitude || "") + '","' +
-                (record.accuracy || "") + '"\n';
+                '"' +
+                record.employee_name +
+                '","' +
+                record.attendance_date +
+                '","' +
+                (record.in_time || "") +
+                '","' +
+                (record.out_time || "") +
+                '","' +
+                (record.latitude || "") +
+                '","' +
+                (record.longitude || "") +
+                '","' +
+                (record.accuracy || "") +
+                '"\n';
         }
     );
 
@@ -739,7 +771,9 @@ async function exportCSV() {
     const link =
         document.createElement("a");
 
+
     link.href = url;
+
 
     link.download =
         "Saanvi_Motors_Attendance_" +
