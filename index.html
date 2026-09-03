@@ -1,512 +1,947 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Saanvi Motors Attendance</title>
+<meta charset="UTF-8">
 
-    <!-- APP / PWA SETUP -->
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#111827">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Saanvi Attendance">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <!-- SUPABASE -->
-    <script src="https://cdn.jsdelivr.net/npm/@Supabase/supabase-js@2"></script>
+<title>Saanvi Motors Attendance</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<link rel="manifest" href="./manifest.json">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #222;
-        }
+<meta
+    name="theme-color"
+    content="#111827"
+>
 
-        .container {
-            width: 95%;
-            max-width: 1100px;
-            margin: 20px auto;
-        }
+<meta
+    name="mobile-web-app-capable"
+    content="yes"
+>
 
-        .header {
-            background: #111827;
-            color: white;
-            padding: 20px;
-            border-radius: 14px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+<meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+>
 
-        .header h1 {
-            margin: 0 0 8px;
-        }
+<meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+>
 
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+<meta
+    name="apple-mobile-web-app-title"
+    content="Saanvi Attendance"
+>
 
-        button {
-            border: none;
-            padding: 12px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-        }
 
-        .tab-btn {
-            background: #e5e7eb;
-        }
+<!-- SUPABASE -->
 
-        .tab-btn.active {
-            background: #111827;
-            color: white;
-        }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        .card {
-            background: white;
-            padding: 22px;
-            border-radius: 14px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
 
-        input {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
+<style>
 
-        .primary {
-            background: #2563eb;
-            color: white;
-            width: 100%;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .success {
-            background: #16a34a;
-            color: white;
-        }
 
-        .danger {
-            background: #dc2626;
-            color: white;
-        }
+body {
 
-        .secondary {
-            background: #6b7280;
-            color: white;
-        }
+    margin: 0;
 
-        .install {
-            background: #111827;
-            color: white;
-            width: 100%;
-            margin-top: 10px;
-        }
+    font-family: Arial, sans-serif;
 
-        .hidden {
-            display: none !important;
-        }
+    background: #f4f6f8;
 
-        .employee-info {
-            background: #f3f4f6;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
+    color: #222;
 
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+}
 
-        .action-buttons button {
-            flex: 1;
-            min-width: 140px;
-        }
 
-        #status {
-            margin: 15px 0;
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-            font-weight: bold;
-        }
+.container {
 
-        .summary {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
+    width: 95%;
 
-        .table-wrapper {
-            overflow-x: auto;
-        }
+    max-width: 1100px;
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
+    margin: 20px auto;
 
-        th,
-        td {
-            border: 1px solid #e5e7eb;
-            padding: 11px;
-            text-align: left;
-        }
+}
 
-        th {
-            background: #111827;
-            color: white;
-        }
 
-        tr:nth-child(even) {
-            background: #f9fafb;
-        }
+.header {
 
-        a {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: bold;
-        }
+    background: #111827;
 
-        .logout {
-            margin-top: 15px;
-            width: 100%;
-        }
+    color: white;
 
-        .admin-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
+    padding: 20px;
 
-        .admin-actions button {
-            flex: 1;
-            min-width: 180px;
-        }
+    border-radius: 14px;
 
-        .note {
-            font-size: 13px;
-            color: #6b7280;
-        }
+    text-align: center;
 
-        @media (max-width: 600px) {
-            .tabs {
-                flex-direction: column;
-            }
+    margin-bottom: 20px;
 
-            .action-buttons {
-                flex-direction: column;
-            }
+}
 
-            .action-buttons button {
-                width: 100%;
-            }
-        }
-    </style>
+
+.header h1 {
+
+    margin: 0 0 8px;
+
+}
+
+
+.tabs {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+}
+
+
+button {
+
+    border: none;
+
+    padding: 12px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+}
+
+
+.tab-btn {
+
+    background: #e5e7eb;
+
+}
+
+
+.tab-btn.active {
+
+    background: #111827;
+
+    color: white;
+
+}
+
+
+.card {
+
+    background: white;
+
+    padding: 22px;
+
+    border-radius: 14px;
+
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+
+    margin-bottom: 20px;
+
+}
+
+
+input {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    margin-bottom: 12px;
+
+    font-size: 16px;
+
+}
+
+
+.primary {
+
+    background: #2563eb;
+
+    color: white;
+
+    width: 100%;
+
+}
+
+
+.success {
+
+    background: #16a34a;
+
+    color: white;
+
+}
+
+
+.danger {
+
+    background: #dc2626;
+
+    color: white;
+
+}
+
+
+.secondary {
+
+    background: #6b7280;
+
+    color: white;
+
+}
+
+
+.install {
+
+    background: #111827;
+
+    color: white;
+
+    width: 100%;
+
+    margin-top: 10px;
+
+}
+
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+.employee-info {
+
+    background: #f3f4f6;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.action-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+}
+
+
+.action-buttons button {
+
+    flex: 1;
+
+    min-width: 140px;
+
+}
+
+
+#status {
+
+    margin: 15px 0;
+
+    padding: 12px;
+
+    background: #f9fafb;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+
+.summary {
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+
+}
+
+
+.table-wrapper {
+
+    overflow-x: auto;
+
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 850px;
+
+}
+
+
+th,
+td {
+
+    border: 1px solid #e5e7eb;
+
+    padding: 11px;
+
+    text-align: left;
+
+}
+
+
+th {
+
+    background: #111827;
+
+    color: white;
+
+}
+
+
+tr:nth-child(even) {
+
+    background: #f9fafb;
+
+}
+
+
+a {
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+}
+
+
+.logout {
+
+    margin-top: 15px;
+
+    width: 100%;
+
+}
+
+
+.admin-actions {
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 15px;
+
+}
+
+
+.admin-actions button {
+
+    flex: 1;
+
+    min-width: 180px;
+
+}
+
+
+.note {
+
+    font-size: 13px;
+
+    color: #6b7280;
+
+}
+
+
+/* =========================
+   CAMERA
+========================= */
+
+.camera-box {
+
+    background: #111827;
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    margin-bottom: 15px;
+
+    text-align: center;
+
+}
+
+
+#cameraVideo {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    border-radius: 12px;
+
+    background: black;
+
+}
+
+
+#selfiePreview {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    border-radius: 12px;
+
+    margin-top: 10px;
+
+}
+
+
+.camera-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 12px;
+
+}
+
+
+.camera-buttons button {
+
+    flex: 1;
+
+}
+
+
+.location-status {
+
+    padding: 12px;
+
+    background: #f3f4f6;
+
+    border-radius: 8px;
+
+    margin-bottom: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.selfie-thumb {
+
+    width: 80px;
+
+    height: 80px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    border: 2px solid #e5e7eb;
+
+}
+
+
+@media (max-width: 600px) {
+
+    .tabs {
+
+        flex-direction: column;
+
+    }
+
+
+    .action-buttons {
+
+        flex-direction: column;
+
+    }
+
+
+    .action-buttons button {
+
+        width: 100%;
+
+    }
+
+
+    .camera-buttons {
+
+        flex-direction: column;
+
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
-    <!-- HEADER -->
 
-    <div class="header">
+<!-- HEADER -->
 
-        <h1>Saanvi Motors Attendance</h1>
+<div class="header">
 
-        <div id="date">
-            Loading date...
-        </div>
+<h1>Saanvi Motors Attendance</h1>
 
-        <div id="time">
-            Loading time...
-        </div>
+<div id="date">
+Loading date...
+</div>
 
-    </div>
+<div id="time">
+Loading time...
+</div>
 
+</div>
 
-    <!-- INSTALL APP BUTTON -->
 
-    <div id="installCard" class="card hidden">
+<!-- INSTALL -->
 
-        <button
-            id="installButton"
-            class="install"
-            onclick="installApp()">
+<div
+    id="installCard"
+    class="card hidden"
+>
 
-            📱 Install Saanvi Motors App
+<button
+    id="installButton"
+    class="install"
+    onclick="installApp()"
+>
 
-        </button>
+📱 Install Saanvi Motors App
 
-    </div>
+</button>
 
+</div>
 
-    <!-- APK DOWNLOAD BUTTON -->
 
-    <div class="card">
+<!-- APK -->
 
-        <a
-            href="https://github.com/saanvimotorsatulshowroom-creator/Saanvi-Motors-Attendance/raw/43668c688cce824f2dbc69271b344e0d648c3120/app-debug.apk"
-            download
-            class="install"
-            style="
-                display:block;
-                text-align:center;
-                text-decoration:none;
-                padding:12px 18px;
-                border-radius:8px;
-                font-size:15px;
-                font-weight:bold;
-            ">
+<div class="card">
 
-            📥 Download Android App
+<a
+    href="https://github.com/saanvimotorsatulshowroom-creator/Saanvi-Motors-Attendance/raw/43668c688cce824f2dbc69271b344e0d648c3120/app-debug.apk"
+    download
+    class="install"
+    style="
+        display:block;
+        text-align:center;
+        text-decoration:none;
+        padding:12px 18px;
+        border-radius:8px;
+        font-size:15px;
+        font-weight:bold;
+    "
+>
 
-        </a>
+📥 Download Android App
 
-    </div>
+</a>
 
+</div>
 
-    <!-- TABS -->
 
-    <div class="tabs">
+<!-- TABS -->
 
-        <button
-            id="employeeTab"
-            class="tab-btn active"
-            onclick="showEmployee()">
+<div class="tabs">
 
-            Employee
+<button
+    id="employeeTab"
+    class="tab-btn active"
+    onclick="showEmployee()"
+>
 
-        </button>
+Employee
 
-        <button
-            id="adminTab"
-            class="tab-btn"
-            onclick="showAdmin()">
+</button>
 
-            Admin
 
-        </button>
+<button
+    id="adminTab"
+    class="tab-btn"
+    onclick="showAdmin()"
+>
 
-    </div>
+Admin
 
+</button>
 
-    <!-- ================= EMPLOYEE ================= -->
+</div>
 
-    <div id="employeePanel">
 
-        <div id="employeeLogin" class="card">
+<!-- =========================
+     EMPLOYEE
+========================= -->
 
-            <h2>Employee Login</h2>
+<div id="employeePanel">
 
-            <input
-                type="text"
-                id="employeeCode"
-                placeholder="Employee ID"
-                autocomplete="off">
 
-            <input
-                type="password"
-                id="employeePin"
-                placeholder="PIN"
-                inputmode="numeric"
-                autocomplete="off">
+<div
+    id="employeeLogin"
+    class="card"
+>
 
-            <button
-                class="primary"
-                onclick="employeeLogin()">
+<h2>Employee Login</h2>
 
-                Login
 
-            </button>
+<input
+    type="text"
+    id="employeeCode"
+    placeholder="Employee ID"
+    autocomplete="off"
+>
 
-        </div>
 
+<input
+    type="password"
+    id="employeePin"
+    placeholder="PIN"
+    inputmode="numeric"
+    autocomplete="off"
+>
 
-        <div id="employeeArea" class="card hidden">
 
-            <div class="employee-info">
+<button
+    class="primary"
+    onclick="employeeLogin()"
+>
 
-                <h2 id="employeeName">
-                    Employee
-                </h2>
+Login
 
-                <div id="employeeCodeDisplay">
-                    Employee ID:
-                </div>
+</button>
 
-            </div>
+</div>
 
 
-            <div id="status">
+<!-- EMPLOYEE AREA -->
 
-                Aaj attendance mark nahi hui.
+<div
+    id="employeeArea"
+    class="card hidden"
+>
 
-            </div>
 
+<div class="employee-info">
 
-            <div class="action-buttons">
+<h2 id="employeeName">
+Employee
+</h2>
 
-                <button
-                    class="success"
-                    onclick="markIn()">
 
-                    🟢 MARK IN
+<div id="employeeCodeDisplay">
+Employee ID:
+</div>
 
-                </button>
+</div>
 
-                <button
-                    class="danger"
-                    onclick="markOut()">
 
-                    🔴 MARK OUT
+<div id="status">
 
-                </button>
+Aaj attendance mark nahi hui.
 
-            </div>
+</div>
 
 
-            <button
-                class="secondary logout"
-                onclick="employeeLogout()">
+<!-- CAMERA -->
 
-                Logout
+<div
+    id="cameraSection"
+    class="camera-box hidden"
+>
 
-            </button>
+<h3 style="color:white;">
+📸 Attendance Selfie
+</h3>
 
-        </div>
 
-    </div>
+<video
+    id="cameraVideo"
+    autoplay
+    playsinline
+>
+</video>
 
 
-    <!-- ================= ADMIN ================= -->
+<canvas
+    id="cameraCanvas"
+    class="hidden"
+>
+</canvas>
 
-    <div id="adminPanel" class="hidden">
 
-        <div id="adminLoginArea" class="card">
+<img
+    id="selfiePreview"
+    class="hidden"
+    alt="Selfie Preview"
+>
 
-            <h2>Admin Login</h2>
 
-            <input
-                type="password"
-                id="adminPassword"
-                placeholder="Admin Password"
-                autocomplete="off">
+<div class="camera-buttons">
 
-            <button
-                class="primary"
-                onclick="loginAdmin()">
+<button
+    class="primary"
+    onclick="captureSelfie()"
+>
 
-                Admin Login
+📸 Capture Selfie
 
-            </button>
+</button>
 
-        </div>
 
+<button
+    class="secondary"
+    onclick="closeCamera()"
+>
 
-        <div id="adminArea" class="card hidden">
+Cancel
 
-            <h2>Today's Attendance</h2>
+</button>
 
-            <div
-                id="summary"
-                class="summary">
+</div>
 
-                Loading...
+</div>
 
-            </div>
 
+<!-- LOCATION STATUS -->
 
-            <div class="admin-actions">
+<div
+    id="locationStatus"
+    class="location-status"
+>
 
-                <button
-                    class="primary"
-                    onclick="loadAdmin()">
+📍 Location: Waiting...
 
-                    🔄 Refresh
+</div>
 
-                </button>
 
-                <button
-                    class="success"
-                    onclick="exportCSV()">
+<div class="action-buttons">
 
-                    📥 Export CSV
 
-                </button>
+<button
+    class="success"
+    onclick="startAttendance()"
+>
 
-            </div>
+🟢 MARK IN
 
+</button>
 
-            <div class="table-wrapper">
 
-                <table>
+<button
+    class="danger"
+    onclick="markOut()"
+>
 
-                    <thead>
+🔴 MARK OUT
 
-                        <tr>
+</button>
 
-                            <th>Employee</th>
-                            <th>Employee ID</th>
-                            <th>IN</th>
-                            <th>OUT</th>
-                            <th>Location</th>
+</div>
 
-                        </tr>
 
-                    </thead>
+<button
+    class="secondary logout"
+    onclick="employeeLogout()"
+>
 
-                    <tbody id="attendanceTable"></tbody>
+Logout
 
-                </table>
+</button>
 
-            </div>
+</div>
 
+</div>
 
-            <p class="note">
 
-                Employee list database se automatically load hoti hai.
+<!-- =========================
+     ADMIN
+========================= -->
 
-            </p>
+<div
+    id="adminPanel"
+    class="hidden"
+>
 
-        </div>
 
-    </div>
+<div
+    id="adminLoginArea"
+    class="card"
+>
+
+<h2>Admin Login</h2>
+
+
+<input
+    type="password"
+    id="adminPassword"
+    placeholder="Admin Password"
+    autocomplete="off"
+>
+
+
+<button
+    class="primary"
+    onclick="loginAdmin()"
+>
+
+Admin Login
+
+</button>
+
+</div>
+
+
+<div
+    id="adminArea"
+    class="card hidden"
+>
+
+<h2>Today's Attendance</h2>
+
+
+<div
+    id="summary"
+    class="summary"
+>
+
+Loading...
+
+</div>
+
+
+<div class="admin-actions">
+
+
+<button
+    class="primary"
+    onclick="loadAdmin()"
+>
+
+🔄 Refresh
+
+</button>
+
+
+<button
+    class="success"
+    onclick="exportCSV()"
+>
+
+📥 Export CSV
+
+</button>
+
+</div>
+
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Employee</th>
+
+<th>Employee ID</th>
+
+<th>IN</th>
+
+<th>OUT</th>
+
+<th>Selfie</th>
+
+<th>Location</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="attendanceTable"></tbody>
+
+</table>
+
+</div>
+
+
+<p class="note">
+
+Employee list database se automatically load hoti hai.
+
+</p>
+
+</div>
+
+</div>
+
 
 </div>
 
 
 <script>
 
+
 /* =====================================================
    SUPABASE
 ===================================================== */
 
+
 const SUPABASE_URL =
     "https://edcrxbzpubjmyeecrbfd.supabase.co";
 
+
 const SUPABASE_KEY =
     "sb_publishable_Yn2d81cVel9qO_2y_p4kSg_DqxB1U1o";
+
 
 const supabaseClient =
     window.supabase.createClient(
@@ -522,11 +957,19 @@ const supabaseClient =
 const ADMIN_PASSWORD = "sahithi123";
 
 
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
 let currentEmployee = null;
+
+let cameraStream = null;
+
+let capturedSelfieBlob = null;
 
 
 /* =====================================================
-   PWA INSTALL
+   PWA
 ===================================================== */
 
 let deferredInstallPrompt = null;
@@ -543,6 +986,7 @@ window.addEventListener(
         document
             .getElementById("installCard")
             .classList.remove("hidden");
+
     }
 );
 
@@ -578,6 +1022,7 @@ async function installApp() {
     document
         .getElementById("installCard")
         .classList.add("hidden");
+
 }
 
 
@@ -589,9 +1034,6 @@ window.addEventListener(
             .getElementById("installCard")
             .classList.add("hidden");
 
-        console.log(
-            "Saanvi Motors App installed."
-        );
     }
 );
 
@@ -608,15 +1050,6 @@ if ("serviceWorker" in navigator) {
 
             navigator.serviceWorker
                 .register("./sw.js")
-                .then(
-                    function() {
-
-                        console.log(
-                            "Saanvi Motors Attendance App Ready"
-                        );
-
-                    }
-                )
                 .catch(
                     function(error) {
 
@@ -642,6 +1075,7 @@ function todayKey() {
 
     const d = new Date();
 
+
     return (
         d.getFullYear() +
         "-" +
@@ -649,6 +1083,7 @@ function todayKey() {
         "-" +
         String(d.getDate()).padStart(2, "0")
     );
+
 }
 
 
@@ -666,60 +1101,43 @@ function currentTime() {
             hour12: true
         }
     );
+
 }
 
 
 /* =====================================================
-   DATE & TIME
+   DATE TIME
 ===================================================== */
 
 function updateDateTime() {
 
-    const date =
-        document.getElementById("date");
-
-    const time =
-        document.getElementById("time");
-
-
-    if (date) {
-
-        date.innerText =
-            new Date().toLocaleDateString(
-                "en-IN",
-                {
-                    weekday: "long",
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric"
-                }
-            );
-
-    }
+    document.getElementById("date").innerText =
+        new Date().toLocaleDateString(
+            "en-IN",
+            {
+                weekday: "long",
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            }
+        );
 
 
-    if (time) {
-
-        time.innerText =
-            new Date().toLocaleTimeString(
-                "en-IN",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: true
-                }
-            );
-
-    }
+    document.getElementById("time").innerText =
+        new Date().toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            }
+        );
 
 }
 
 
-setInterval(
-    updateDateTime,
-    1000
-);
+setInterval(updateDateTime, 1000);
 
 updateDateTime();
 
@@ -734,13 +1152,16 @@ function showEmployee() {
         .getElementById("employeePanel")
         .classList.remove("hidden");
 
+
     document
         .getElementById("adminPanel")
         .classList.add("hidden");
 
+
     document
         .getElementById("employeeTab")
         .classList.add("active");
+
 
     document
         .getElementById("adminTab")
@@ -755,13 +1176,16 @@ function showAdmin() {
         .getElementById("employeePanel")
         .classList.add("hidden");
 
+
     document
         .getElementById("adminPanel")
         .classList.remove("hidden");
 
+
     document
         .getElementById("employeeTab")
         .classList.remove("active");
+
 
     document
         .getElementById("adminTab")
@@ -831,10 +1255,7 @@ async function employeeLogin() {
     }
 
 
-    if (
-        !data ||
-        data.length === 0
-    ) {
+    if (!data || data.length === 0) {
 
         alert(
             "Invalid Employee ID."
@@ -844,8 +1265,7 @@ async function employeeLogin() {
     }
 
 
-    const employee =
-        data[0];
+    const employee = data[0];
 
 
     if (
@@ -861,8 +1281,7 @@ async function employeeLogin() {
     }
 
 
-    currentEmployee =
-        employee;
+    currentEmployee = employee;
 
 
     document
@@ -888,6 +1307,12 @@ async function employeeLogin() {
         employee.employee_code;
 
 
+    document
+        .getElementById("locationStatus")
+        .innerText =
+        "📍 Location: Ready";
+
+
     await showStatus();
 
 }
@@ -899,7 +1324,12 @@ async function employeeLogin() {
 
 function employeeLogout() {
 
+    closeCamera();
+
+
     currentEmployee = null;
+
+    capturedSelfieBlob = null;
 
 
     document
@@ -936,11 +1366,7 @@ function employeeLogout() {
 
 async function showStatus() {
 
-    if (!currentEmployee) {
-
-        return;
-
-    }
+    if (!currentEmployee) return;
 
 
     const status =
@@ -1014,9 +1440,7 @@ async function showStatus() {
 
     }
 
-    else if (
-        record.in_time
-    ) {
+    else if (record.in_time) {
 
         status.innerText =
             "IN: " +
@@ -1036,10 +1460,10 @@ async function showStatus() {
 
 
 /* =====================================================
-   MARK IN
+   START ATTENDANCE
 ===================================================== */
 
-async function markIn() {
+async function startAttendance() {
 
     if (!currentEmployee) {
 
@@ -1051,14 +1475,332 @@ async function markIn() {
     }
 
 
-    if (!navigator.geolocation) {
+    /* Check existing attendance */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("ATTENDANCE")
+            .select("*")
+            .eq(
+                "employee_name",
+                currentEmployee.employee_name
+            )
+            .eq(
+                "attendance_date",
+                todayKey()
+            )
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
+            )
+            .limit(1);
+
+
+    if (error) {
 
         alert(
-            "Is phone/browser me Location available nahi hai."
+            "Database error: " +
+            error.message
         );
 
         return;
     }
+
+
+    const existing =
+        data && data.length
+            ? data[0]
+            : null;
+
+
+    if (
+        existing &&
+        existing.in_time
+    ) {
+
+        alert(
+            "Aaj ka MARK IN already ho chuka hai."
+        );
+
+        return;
+    }
+
+
+    /* Open camera */
+
+    await openCamera();
+
+}
+
+
+/* =====================================================
+   OPEN CAMERA
+===================================================== */
+
+async function openCamera() {
+
+    try {
+
+        if (
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ) {
+
+            alert(
+                "Camera is browser/device me available nahi hai."
+            );
+
+            return;
+        }
+
+
+        cameraStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: "user",
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    }
+                },
+
+                audio: false
+
+            });
+
+
+        const video =
+            document.getElementById(
+                "cameraVideo"
+            );
+
+
+        video.srcObject =
+            cameraStream;
+
+
+        document
+            .getElementById("cameraSection")
+            .classList.remove("hidden");
+
+
+        document
+            .getElementById("locationStatus")
+            .innerText =
+            "📸 Camera ready. Selfie capture karo.";
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Camera Error:",
+            error
+        );
+
+
+        alert(
+            "Camera permission Allow karo."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CAPTURE SELFIE
+===================================================== */
+
+function captureSelfie() {
+
+    const video =
+        document.getElementById(
+            "cameraVideo"
+        );
+
+
+    const canvas =
+        document.getElementById(
+            "cameraCanvas"
+        );
+
+
+    const preview =
+        document.getElementById(
+            "selfiePreview"
+        );
+
+
+    if (
+        !video.videoWidth ||
+        !video.videoHeight
+    ) {
+
+        alert(
+            "Camera ready hone ka wait karo."
+        );
+
+        return;
+    }
+
+
+    canvas.width =
+        video.videoWidth;
+
+
+    canvas.height =
+        video.videoHeight;
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    /*
+       Mirror effect for natural selfie.
+    */
+
+    ctx.translate(
+        canvas.width,
+        0
+    );
+
+
+    ctx.scale(
+        -1,
+        1
+    );
+
+
+    ctx.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    canvas.toBlob(
+
+        function(blob) {
+
+            if (!blob) {
+
+                alert(
+                    "Selfie capture nahi hui."
+                );
+
+                return;
+            }
+
+
+            capturedSelfieBlob =
+                blob;
+
+
+            preview.src =
+                URL.createObjectURL(blob);
+
+
+            preview.classList.remove(
+                "hidden"
+            );
+
+
+            document
+                .getElementById(
+                    "locationStatus"
+                )
+                .innerText =
+                "✅ Selfie captured. Location li ja rahi hai...";
+
+
+            closeCamera();
+
+
+            getGPSAndSave();
+
+        },
+
+        "image/jpeg",
+
+        0.82
+
+    );
+
+}
+
+
+/* =====================================================
+   CLOSE CAMERA
+===================================================== */
+
+function closeCamera() {
+
+    if (cameraStream) {
+
+        cameraStream
+            .getTracks()
+            .forEach(
+                function(track) {
+
+                    track.stop();
+
+                }
+            );
+
+        cameraStream = null;
+
+    }
+
+
+    const video =
+        document.getElementById(
+            "cameraVideo"
+        );
+
+
+    video.srcObject = null;
+
+
+    document
+        .getElementById("cameraSection")
+        .classList.add("hidden");
+
+}
+
+
+/* =====================================================
+   GPS
+===================================================== */
+
+function getGPSAndSave() {
+
+    if (!navigator.geolocation) {
+
+        alert(
+            "Is phone/browser me GPS available nahi hai."
+        );
+
+        return;
+    }
+
+
+    document
+        .getElementById("locationStatus")
+        .innerText =
+        "📍 GPS location li ja rahi hai...";
 
 
     navigator.geolocation.getCurrentPosition(
@@ -1068,121 +1810,28 @@ async function markIn() {
             const latitude =
                 position.coords.latitude;
 
+
             const longitude =
                 position.coords.longitude;
+
 
             const accuracy =
                 position.coords.accuracy;
 
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("ATTENDANCE")
-                    .select("*")
-                    .eq(
-                        "employee_name",
-                        currentEmployee.employee_name
-                    )
-                    .eq(
-                        "attendance_date",
-                        todayKey()
-                    )
-                    .order(
-                        "id",
-                        {
-                            ascending: false
-                        }
-                    )
-                    .limit(1);
+            document
+                .getElementById("locationStatus")
+                .innerText =
+                "📍 Location captured. Attendance save ho rahi hai...";
 
 
-            if (error) {
+            await saveAttendance(
 
-                console.error(error);
+                latitude,
+                longitude,
+                accuracy
 
-                alert(
-                    "Database error: " +
-                    error.message
-                );
-
-                return;
-            }
-
-
-            const existing =
-                data && data.length
-                    ? data[0]
-                    : null;
-
-
-            if (
-                existing &&
-                existing.in_time
-            ) {
-
-                alert(
-                    "Aaj ka MARK IN already ho chuka hai."
-                );
-
-                return;
-            }
-
-
-            const {
-                error: insertError
-            } =
-                await supabaseClient
-                    .from("ATTENDANCE")
-                    .insert({
-
-                        employee_name:
-                            currentEmployee.employee_name,
-
-                        attendance_date:
-                            todayKey(),
-
-                        in_time:
-                            currentTime(),
-
-                        out_time:
-                            null,
-
-                        latitude:
-                            latitude,
-
-                        longitude:
-                            longitude,
-
-                        accuracy:
-                            accuracy
-
-                    });
-
-
-            if (insertError) {
-
-                console.error(
-                    insertError
-                );
-
-                alert(
-                    "Attendance save nahi hui: " +
-                    insertError.message
-                );
-
-                return;
-            }
-
-
-            alert(
-                "🟢 MARK IN successfully ho gaya."
             );
-
-
-            await showStatus();
 
         },
 
@@ -1190,6 +1839,9 @@ async function markIn() {
         function(error) {
 
             console.error(error);
+
+
+            capturedSelfieBlob = null;
 
 
             if (error.code === 1) {
@@ -1211,7 +1863,7 @@ async function markIn() {
             else if (error.code === 3) {
 
                 alert(
-                    "Location timeout. Dobara try karo."
+                    "Location timeout. Dobara MARK IN karo."
                 );
 
             }
@@ -1224,16 +1876,224 @@ async function markIn() {
 
             }
 
+
+            document
+                .getElementById("locationStatus")
+                .innerText =
+                "📍 Location not captured.";
+
         },
 
 
         {
+
             enableHighAccuracy: true,
+
             timeout: 15000,
+
             maximumAge: 0
+
         }
 
     );
+
+}
+
+
+/* =====================================================
+   SAVE ATTENDANCE
+===================================================== */
+
+async function saveAttendance(
+    latitude,
+    longitude,
+    accuracy
+) {
+
+    if (!capturedSelfieBlob) {
+
+        alert(
+            "Selfie missing hai. Dobara MARK IN karo."
+        );
+
+        return;
+    }
+
+
+    try {
+
+
+        /* =========================
+           UPLOAD SELFIE
+        ========================= */
+
+
+        const fileName =
+
+            currentEmployee.employee_code +
+
+            "_" +
+
+            todayKey() +
+
+            "_" +
+
+            Date.now() +
+
+            ".jpg";
+
+
+        const filePath =
+
+            "attendance/" +
+
+            fileName;
+
+
+        const {
+            error: uploadError
+        } =
+            await supabaseClient
+                .storage
+                .from(
+                    "attendance-selfies"
+                )
+                .upload(
+                    filePath,
+                    capturedSelfieBlob,
+                    {
+                        contentType:
+                            "image/jpeg",
+
+                        upsert: false
+                    }
+                );
+
+
+        if (uploadError) {
+
+            console.error(
+                uploadError
+            );
+
+
+            alert(
+                "Selfie upload nahi hui: " +
+                uploadError.message
+            );
+
+            return;
+        }
+
+
+        /* =========================
+           PUBLIC SELFIE URL
+        ========================= */
+
+
+        const {
+            data: publicData
+        } =
+            supabaseClient
+                .storage
+                .from(
+                    "attendance-selfies"
+                )
+                .getPublicUrl(
+                    filePath
+                );
+
+
+        const selfieURL =
+            publicData.publicUrl;
+
+
+        /* =========================
+           SAVE DATABASE
+        ========================= */
+
+
+        const {
+            error: insertError
+        } =
+            await supabaseClient
+                .from("ATTENDANCE")
+                .insert({
+
+                    employee_name:
+                        currentEmployee.employee_name,
+
+                    attendance_date:
+                        todayKey(),
+
+                    in_time:
+                        currentTime(),
+
+                    out_time:
+                        null,
+
+                    latitude:
+                        latitude,
+
+                    longitude:
+                        longitude,
+
+                    accuracy:
+                        accuracy,
+
+                    selfie_url:
+                        selfieURL
+
+                });
+
+
+        if (insertError) {
+
+            console.error(
+                insertError
+            );
+
+
+            alert(
+                "Attendance save nahi hui: " +
+                insertError.message
+            );
+
+            return;
+        }
+
+
+        capturedSelfieBlob = null;
+
+
+        document
+            .getElementById(
+                "locationStatus"
+            )
+            .innerText =
+            "✅ GPS + Selfie saved";
+
+
+        alert(
+            "🟢 MARK IN successfully ho gaya.\n\n📸 Selfie saved\n📍 GPS saved"
+        );
+
+
+        await showStatus();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        alert(
+            "Attendance process failed: " +
+            error.message
+        );
+
+    }
 
 }
 
@@ -1279,8 +2139,6 @@ async function markOut() {
 
 
     if (error) {
-
-        console.error(error);
 
         alert(
             "Database error: " +
@@ -1339,10 +2197,6 @@ async function markOut() {
 
     if (updateError) {
 
-        console.error(
-            updateError
-        );
-
         alert(
             "MARK OUT save nahi hua: " +
             updateError.message
@@ -1370,7 +2224,9 @@ async function loginAdmin() {
 
     const password =
         document
-            .getElementById("adminPassword")
+            .getElementById(
+                "adminPassword"
+            )
             .value;
 
 
@@ -1388,12 +2244,16 @@ async function loginAdmin() {
 
 
     document
-        .getElementById("adminLoginArea")
+        .getElementById(
+            "adminLoginArea"
+        )
         .classList.add("hidden");
 
 
     document
-        .getElementById("adminArea")
+        .getElementById(
+            "adminArea"
+        )
         .classList.remove("hidden");
 
 
@@ -1429,10 +2289,6 @@ async function loadAdmin() {
 
     if (attendanceError) {
 
-        console.error(
-            attendanceError
-        );
-
         alert(
             "Admin data load nahi hui: " +
             attendanceError.message
@@ -1459,10 +2315,6 @@ async function loadAdmin() {
 
     if (employeeError) {
 
-        console.error(
-            employeeError
-        );
-
         alert(
             "Employee list load nahi hui: " +
             employeeError.message
@@ -1485,10 +2337,13 @@ async function loadAdmin() {
 
 
     (employees || []).forEach(
+
         function(employee) {
+
 
             const records =
                 attendanceData.filter(
+
                     function(item) {
 
                         return (
@@ -1497,6 +2352,7 @@ async function loadAdmin() {
                         );
 
                     }
+
                 );
 
 
@@ -1518,6 +2374,44 @@ async function loadAdmin() {
             }
 
 
+            /* =========================
+               SELFIE
+            ========================= */
+
+
+            let selfieHTML =
+                "—";
+
+
+            if (
+                record &&
+                record.selfie_url
+            ) {
+
+                selfieHTML =
+
+                    '<a href="' +
+                    escapeAttribute(
+                        record.selfie_url
+                    ) +
+                    '" target="_blank" rel="noopener noreferrer">' +
+
+                    '<img src="' +
+                    escapeAttribute(
+                        record.selfie_url
+                    ) +
+                    '" class="selfie-thumb" alt="Selfie">' +
+
+                    '</a>';
+
+            }
+
+
+            /* =========================
+               LOCATION
+            ========================= */
+
+
             let locationHTML =
                 "—";
 
@@ -1530,16 +2424,23 @@ async function loadAdmin() {
 
                 const mapURL =
                     "https://www.google.com/maps?q=" +
-                    record.latitude +
-                    "," +
-                    record.longitude;
+                    encodeURIComponent(
+                        record.latitude +
+                        "," +
+                        record.longitude
+                    );
 
 
                 locationHTML =
+
                     '<a href="' +
-                    mapURL +
+                    escapeAttribute(
+                        mapURL
+                    ) +
                     '" target="_blank" rel="noopener noreferrer">' +
+
                     "📍 View Location" +
+
                     "</a>";
 
             }
@@ -1554,45 +2455,68 @@ async function loadAdmin() {
             row.innerHTML =
 
                 "<td>" +
+
                 escapeHTML(
                     employee.employee_name
                 ) +
+
                 "</td>" +
 
+
                 "<td>" +
+
                 escapeHTML(
                     employee.employee_code || "—"
                 ) +
+
                 "</td>" +
 
+
                 "<td>" +
+
                 (
                     record?.in_time ||
                     "—"
                 ) +
+
                 "</td>" +
 
+
                 "<td>" +
+
                 (
                     record?.out_time ||
                     "—"
                 ) +
+
                 "</td>" +
 
+
                 "<td>" +
+
+                selfieHTML +
+
+                "</td>" +
+
+
+                "<td>" +
+
                 locationHTML +
+
                 "</td>";
 
 
             table.appendChild(row);
 
         }
+
     );
 
 
     document
         .getElementById("summary")
         .innerText =
+
         "Present: " +
         present +
         " / " +
@@ -1637,6 +2561,33 @@ function escapeHTML(value) {
 }
 
 
+function escapeAttribute(value) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        );
+
+}
+
+
 /* =====================================================
    EXPORT CSV
 ===================================================== */
@@ -1674,30 +2625,44 @@ async function exportCSV() {
 
 
     let csv =
-        "Employee,Date,IN,OUT,Latitude,Longitude,Accuracy\n";
+
+        "Employee,Date,IN,OUT,Latitude,Longitude,Accuracy,Selfie URL\n";
 
 
     (data || []).forEach(
+
         function(record) {
 
             csv +=
+
                 '"' +
                 (record.employee_name || "") +
                 '","' +
+
                 (record.attendance_date || "") +
                 '","' +
+
                 (record.in_time || "") +
                 '","' +
+
                 (record.out_time || "") +
                 '","' +
+
                 (record.latitude || "") +
                 '","' +
+
                 (record.longitude || "") +
                 '","' +
+
                 (record.accuracy || "") +
+                '","' +
+
+                (record.selfie_url || "") +
+
                 '"\n';
 
         }
+
     );
 
 
@@ -1722,16 +2687,22 @@ async function exportCSV() {
 
 
     link.download =
+
         "Saanvi_Motors_Attendance_" +
+
         todayKey() +
+
         ".csv";
 
 
     document.body.appendChild(link);
 
+
     link.click();
 
+
     document.body.removeChild(link);
+
 
     URL.revokeObjectURL(url);
 
@@ -1740,5 +2711,5 @@ async function exportCSV() {
 </script>
 
 </body>
+
 </html>
-```
