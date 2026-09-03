@@ -1,635 +1,367 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Saanvi Motors Attendance</title>
 
 <link rel="manifest" href="./manifest.json">
 
-<meta
-    name="theme-color"
-    content="#111827"
->
-
-<meta
-    name="mobile-web-app-capable"
-    content="yes"
->
-
-<meta
-    name="apple-mobile-web-app-capable"
-    content="yes"
->
-
-<meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="black-translucent"
->
-
-<meta
-    name="apple-mobile-web-app-title"
-    content="Saanvi Attendance"
->
-
-
-<!-- SUPABASE -->
+<meta name="theme-color" content="#111827">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
 <style>
+*{box-sizing:border-box}
 
-* {
-    box-sizing: border-box;
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f6f8;
+    color:#222;
 }
 
-
-body {
-
-    margin: 0;
-
-    font-family: Arial, sans-serif;
-
-    background: #f4f6f8;
-
-    color: #222;
-
+.container{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
 }
 
-
-.container {
-
-    width: 95%;
-
-    max-width: 1100px;
-
-    margin: 20px auto;
-
+.header{
+    background:#111827;
+    color:white;
+    padding:20px;
+    border-radius:14px;
+    text-align:center;
+    margin-bottom:20px;
 }
 
+.header h1{margin:0 0 8px}
 
-.header {
-
-    background: #111827;
-
-    color: white;
-
-    padding: 20px;
-
-    border-radius: 14px;
-
-    text-align: center;
-
-    margin-bottom: 20px;
-
+.tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
 }
 
-
-.header h1 {
-
-    margin: 0 0 8px;
-
+button{
+    border:none;
+    padding:12px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
 }
 
-
-.tabs {
-
-    display: flex;
-
-    gap: 10px;
-
-    margin-bottom: 20px;
-
+button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
 }
 
+.tab-btn{background:#e5e7eb}
+.tab-btn.active{background:#111827;color:white}
 
-button {
-
-    border: none;
-
-    padding: 12px 18px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
+.card{
+    background:white;
+    padding:22px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+    margin-bottom:20px;
 }
 
-
-.tab-btn {
-
-    background: #e5e7eb;
-
+input,select{
+    width:100%;
+    padding:13px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    margin-bottom:12px;
+    font-size:16px;
+    background:white;
 }
 
+.primary{background:#2563eb;color:white;width:100%}
+.success{background:#16a34a;color:white}
+.danger{background:#dc2626;color:white}
+.secondary{background:#6b7280;color:white}
 
-.tab-btn.active {
-
-    background: #111827;
-
-    color: white;
-
+.install{
+    background:#111827;
+    color:white;
+    width:100%;
+    margin-top:10px;
 }
 
+.hidden{display:none!important}
 
-.card {
-
-    background: white;
-
-    padding: 22px;
-
-    border-radius: 14px;
-
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-
-    margin-bottom: 20px;
-
+.employee-info{
+    background:#f3f4f6;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
 }
 
-
-input {
-
-    width: 100%;
-
-    padding: 13px;
-
-    border: 1px solid #d1d5db;
-
-    border-radius: 8px;
-
-    margin-bottom: 12px;
-
-    font-size: 16px;
-
+.action-buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
-
-.primary {
-
-    background: #2563eb;
-
-    color: white;
-
-    width: 100%;
-
+.action-buttons button{
+    flex:1;
+    min-width:140px;
 }
 
-
-.success {
-
-    background: #16a34a;
-
-    color: white;
-
+#status{
+    margin:15px 0;
+    padding:14px;
+    background:#f9fafb;
+    border-radius:8px;
+    font-weight:bold;
 }
 
-
-.danger {
-
-    background: #dc2626;
-
-    color: white;
-
+.status-duty{
+    background:#dcfce7!important;
+    color:#166534;
 }
 
-
-.secondary {
-
-    background: #6b7280;
-
-    color: white;
-
+.status-complete{
+    background:#dbeafe!important;
+    color:#1e40af;
 }
 
-
-.install {
-
-    background: #111827;
-
-    color: white;
-
-    width: 100%;
-
-    margin-top: 10px;
-
+.summary{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:15px;
 }
 
-
-.hidden {
-
-    display: none !important;
-
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:20px;
 }
 
-
-.employee-info {
-
-    background: #f3f4f6;
-
-    padding: 15px;
-
-    border-radius: 10px;
-
-    margin-bottom: 15px;
-
+.summary-box{
+    background:#f3f4f6;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
 }
 
-
-.action-buttons {
-
-    display: flex;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-
+.summary-number{
+    display:block;
+    font-size:25px;
+    font-weight:bold;
+    margin-top:5px;
 }
 
+.table-wrapper{overflow-x:auto}
 
-.action-buttons button {
-
-    flex: 1;
-
-    min-width: 140px;
-
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1250px;
 }
 
-
-#status {
-
-    margin: 15px 0;
-
-    padding: 12px;
-
-    background: #f9fafb;
-
-    border-radius: 8px;
-
-    font-weight: bold;
-
+th,td{
+    border:1px solid #e5e7eb;
+    padding:10px;
+    text-align:left;
+    vertical-align:middle;
 }
 
-
-.summary {
-
-    font-size: 18px;
-
-    font-weight: bold;
-
-    margin-bottom: 15px;
-
+th{
+    background:#111827;
+    color:white;
 }
 
+tr:nth-child(even){background:#f9fafb}
 
-.table-wrapper {
-
-    overflow-x: auto;
-
+a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:bold;
 }
 
-
-table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-
-    min-width: 850px;
-
+.logout{
+    margin-top:15px;
+    width:100%;
 }
 
-
-th,
-td {
-
-    border: 1px solid #e5e7eb;
-
-    padding: 11px;
-
-    text-align: left;
-
+.admin-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
 }
 
-
-th {
-
-    background: #111827;
-
-    color: white;
-
+.admin-actions button{
+    flex:1;
+    min-width:180px;
 }
 
-
-tr:nth-child(even) {
-
-    background: #f9fafb;
-
+.note{
+    font-size:13px;
+    color:#6b7280;
 }
 
-
-a {
-
-    color: #2563eb;
-
-    text-decoration: none;
-
-    font-weight: bold;
-
+.camera-box{
+    background:#111827;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:15px;
+    text-align:center;
 }
 
-
-.logout {
-
-    margin-top: 15px;
-
-    width: 100%;
-
+#cameraVideo{
+    width:100%;
+    max-width:420px;
+    border-radius:12px;
+    background:black;
 }
 
-
-.admin-actions {
-
-    display: flex;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-
-    margin-bottom: 15px;
-
+#selfiePreview{
+    width:100%;
+    max-width:420px;
+    border-radius:12px;
+    margin-top:10px;
 }
 
-
-.admin-actions button {
-
-    flex: 1;
-
-    min-width: 180px;
-
+.camera-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
 }
 
+.camera-buttons button{flex:1}
 
-.note {
-
-    font-size: 13px;
-
-    color: #6b7280;
-
+.location-status{
+    padding:12px;
+    background:#f3f4f6;
+    border-radius:8px;
+    margin-bottom:12px;
+    font-weight:bold;
 }
 
-
-/* =========================
-   CAMERA
-========================= */
-
-.camera-box {
-
-    background: #111827;
-
-    padding: 15px;
-
-    border-radius: 14px;
-
-    margin-bottom: 15px;
-
-    text-align: center;
-
+.live-box{
+    padding:14px;
+    border-radius:10px;
+    background:#ecfeff;
+    border:1px solid #a5f3fc;
+    margin-bottom:15px;
 }
 
-
-#cameraVideo {
-
-    width: 100%;
-
-    max-width: 420px;
-
-    border-radius: 12px;
-
-    background: black;
-
+.live-dot{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    background:#16a34a;
+    border-radius:50%;
+    margin-right:6px;
 }
 
-
-#selfiePreview {
-
-    width: 100%;
-
-    max-width: 420px;
-
-    border-radius: 12px;
-
-    margin-top: 10px;
-
+.selfie-thumb{
+    width:75px;
+    height:75px;
+    object-fit:cover;
+    border-radius:10px;
+    border:2px solid #e5e7eb;
 }
 
-
-.camera-buttons {
-
-    display: flex;
-
-    gap: 10px;
-
-    margin-top: 12px;
-
+.small-btn{
+    padding:8px 10px;
+    font-size:13px;
+    margin:2px;
 }
 
-
-.camera-buttons button {
-
-    flex: 1;
-
+.history-box{
+    max-height:400px;
+    overflow:auto;
+    margin-top:15px;
 }
 
-
-.location-status {
-
-    padding: 12px;
-
-    background: #f3f4f6;
-
-    border-radius: 8px;
-
-    margin-bottom: 12px;
-
-    font-weight: bold;
-
+.history-item{
+    padding:10px;
+    border-bottom:1px solid #e5e7eb;
 }
 
-
-.selfie-thumb {
-
-    width: 80px;
-
-    height: 80px;
-
-    object-fit: cover;
-
-    border-radius: 10px;
-
-    border: 2px solid #e5e7eb;
-
+.badge{
+    display:inline-block;
+    padding:5px 8px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
 }
 
+.badge-present{background:#dcfce7;color:#166534}
+.badge-absent{background:#fee2e2;color:#991b1b}
+.badge-incomplete{background:#fef3c7;color:#92400e}
+.badge-duty{background:#dbeafe;color:#1e40af}
 
-@media (max-width: 600px) {
-
-    .tabs {
-
-        flex-direction: column;
-
+@media(max-width:800px){
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
     }
-
-
-    .action-buttons {
-
-        flex-direction: column;
-
-    }
-
-
-    .action-buttons button {
-
-        width: 100%;
-
-    }
-
-
-    .camera-buttons {
-
-        flex-direction: column;
-
-    }
-
 }
 
+@media(max-width:600px){
+    .tabs{flex-direction:column}
+    .action-buttons{flex-direction:column}
+    .action-buttons button{width:100%}
+    .camera-buttons{flex-direction:column}
+}
 </style>
-
 </head>
-
 
 <body>
 
-
 <div class="container">
 
-
-<!-- HEADER -->
-
 <div class="header">
-
-<h1>Saanvi Motors Attendance</h1>
-
-<div id="date">
-Loading date...
+    <h1>Saanvi Motors Attendance</h1>
+    <div id="date">Loading date...</div>
+    <div id="time">Loading time...</div>
 </div>
 
-<div id="time">
-Loading time...
+<div id="installCard" class="card hidden">
+    <button id="installButton" class="install" onclick="installApp()">
+        📱 Install Saanvi Motors App
+    </button>
 </div>
-
-</div>
-
-
-<!-- INSTALL -->
-
-<div
-    id="installCard"
-    class="card hidden"
->
-
-<button
-    id="installButton"
-    class="install"
-    onclick="installApp()"
->
-
-📱 Install Saanvi Motors App
-
-</button>
-
-</div>
-
-
-<!-- APK -->
 
 <div class="card">
-
-<a
-    href="https://github.com/saanvimotorsatulshowroom-creator/Saanvi-Motors-Attendance/raw/43668c688cce824f2dbc69271b344e0d648c3120/app-debug.apk"
-    download
-    class="install"
-    style="
-        display:block;
-        text-align:center;
-        text-decoration:none;
-        padding:12px 18px;
-        border-radius:8px;
-        font-size:15px;
-        font-weight:bold;
-    "
->
-
-📥 Download Android App
-
-</a>
-
+    <a
+        href="https://github.com/saanvimotorsatulshowroom-creator/Saanvi-Motors-Attendance/raw/43668c688cce824f2dbc69271b344e0d648c3120/app-debug.apk"
+        download
+        class="install"
+        style="display:block;text-align:center;text-decoration:none;padding:12px 18px;border-radius:8px;font-size:15px;font-weight:bold"
+    >
+        📥 Download Android App
+    </a>
 </div>
-
-
-<!-- TABS -->
 
 <div class="tabs">
+    <button id="employeeTab" class="tab-btn active" onclick="showEmployee()">
+        Employee
+    </button>
 
-<button
-    id="employeeTab"
-    class="tab-btn active"
-    onclick="showEmployee()"
->
-
-Employee
-
-</button>
-
-
-<button
-    id="adminTab"
-    class="tab-btn"
-    onclick="showAdmin()"
->
-
-Admin
-
-</button>
-
+    <button id="adminTab" class="tab-btn" onclick="showAdmin()">
+        Admin
+    </button>
 </div>
 
-
-<!-- =========================
-     EMPLOYEE
-========================= -->
+<!-- EMPLOYEE -->
 
 <div id="employeePanel">
 
-
-<div
-    id="employeeLogin"
-    class="card"
->
+<div id="employeeLogin" class="card">
 
 <h2>Employee Login</h2>
-
 
 <input
     type="text"
@@ -637,7 +369,6 @@ Admin
     placeholder="Employee ID"
     autocomplete="off"
 >
-
 
 <input
     type="password"
@@ -647,176 +378,82 @@ Admin
     autocomplete="off"
 >
 
-
-<button
-    class="primary"
-    onclick="employeeLogin()"
->
-
-Login
-
+<button class="primary" onclick="employeeLogin()">
+    Login
 </button>
 
 </div>
 
-
-<!-- EMPLOYEE AREA -->
-
-<div
-    id="employeeArea"
-    class="card hidden"
->
-
+<div id="employeeArea" class="card hidden">
 
 <div class="employee-info">
-
-<h2 id="employeeName">
-Employee
-</h2>
-
-
-<div id="employeeCodeDisplay">
-Employee ID:
+    <h2 id="employeeName">Employee</h2>
+    <div id="employeeCodeDisplay">Employee ID:</div>
 </div>
-
-</div>
-
 
 <div id="status">
-
-Aaj attendance mark nahi hui.
-
+    Aaj attendance mark nahi hui.
 </div>
 
+<div id="liveTrackingBox" class="live-box hidden">
+    <span class="live-dot"></span>
+    <b>LIVE LOCATION TRACKING ACTIVE</b>
+    <div id="liveLocationText">Waiting for GPS...</div>
+</div>
 
-<!-- CAMERA -->
+<div id="cameraSection" class="camera-box hidden">
 
-<div
-    id="cameraSection"
-    class="camera-box hidden"
->
+<h3 style="color:white">📸 Attendance Selfie</h3>
 
-<h3 style="color:white;">
-📸 Attendance Selfie
-</h3>
+<video id="cameraVideo" autoplay playsinline></video>
 
+<canvas id="cameraCanvas" class="hidden"></canvas>
 
-<video
-    id="cameraVideo"
-    autoplay
-    playsinline
->
-</video>
-
-
-<canvas
-    id="cameraCanvas"
-    class="hidden"
->
-</canvas>
-
-
-<img
-    id="selfiePreview"
-    class="hidden"
-    alt="Selfie Preview"
->
-
+<img id="selfiePreview" class="hidden" alt="Selfie Preview">
 
 <div class="camera-buttons">
 
-<button
-    class="primary"
-    onclick="captureSelfie()"
->
-
-📸 Capture Selfie
-
+<button id="captureButton" class="primary" onclick="captureSelfie()">
+    📸 Capture Selfie
 </button>
 
-
-<button
-    class="secondary"
-    onclick="closeCamera()"
->
-
-Cancel
-
+<button class="secondary" onclick="closeCamera()">
+    Cancel
 </button>
 
 </div>
-
 </div>
 
-
-<!-- LOCATION STATUS -->
-
-<div
-    id="locationStatus"
-    class="location-status"
->
-
-📍 Location: Waiting...
-
+<div id="locationStatus" class="location-status">
+    📍 Location: Ready
 </div>
-
 
 <div class="action-buttons">
 
-
-<button
-    class="success"
-    onclick="startAttendance()"
->
-
-🟢 MARK IN
-
+<button id="markInButton" class="success" onclick="startAttendance()">
+    🟢 MARK IN
 </button>
 
-
-<button
-    class="danger"
-    onclick="markOut()"
->
-
-🔴 MARK OUT
-
+<button id="markOutButton" class="danger" onclick="startMarkOut()">
+    🔴 MARK OUT
 </button>
 
 </div>
 
-
-<button
-    class="secondary logout"
-    onclick="employeeLogout()"
->
-
-Logout
-
+<button class="secondary logout" onclick="employeeLogout()">
+    Logout
 </button>
 
 </div>
-
 </div>
 
+<!-- ADMIN -->
 
-<!-- =========================
-     ADMIN
-========================= -->
+<div id="adminPanel" class="hidden">
 
-<div
-    id="adminPanel"
-    class="hidden"
->
-
-
-<div
-    id="adminLoginArea"
-    class="card"
->
+<div id="adminLoginArea" class="card">
 
 <h2>Admin Login</h2>
-
 
 <input
     type="password"
@@ -825,86 +462,81 @@ Logout
     autocomplete="off"
 >
 
-
-<button
-    class="primary"
-    onclick="loginAdmin()"
->
-
-Admin Login
-
+<button class="primary" onclick="loginAdmin()">
+    Admin Login
 </button>
 
 </div>
 
+<div id="adminArea" class="card hidden">
 
-<div
-    id="adminArea"
-    class="card hidden"
->
+<h2>Attendance Dashboard</h2>
 
-<h2>Today's Attendance</h2>
+<div class="summary-grid">
+    <div class="summary-box">
+        Present
+        <span id="presentCount" class="summary-number">0</span>
+    </div>
 
+    <div class="summary-box">
+        Absent
+        <span id="absentCount" class="summary-number">0</span>
+    </div>
 
-<div
-    id="summary"
-    class="summary"
->
+    <div class="summary-box">
+        Incomplete
+        <span id="incompleteCount" class="summary-number">0</span>
+    </div>
 
-Loading...
-
+    <div class="summary-box">
+        On Duty
+        <span id="dutyCount" class="summary-number">0</span>
+    </div>
 </div>
-
 
 <div class="admin-actions">
 
-
-<button
-    class="primary"
-    onclick="loadAdmin()"
->
-
-🔄 Refresh
-
+<button class="primary" onclick="loadAdmin()">
+    🔄 Refresh
 </button>
 
-
-<button
-    class="success"
-    onclick="exportCSV()"
->
-
-📥 Export CSV
-
+<button class="success" onclick="exportCSV()">
+    📥 Export CSV
 </button>
 
 </div>
 
+<h3>📅 Monthly Attendance</h3>
+
+<input type="month" id="monthSelector">
+
+<button class="primary" onclick="loadMonthlyAttendance()">
+    📊 Load Selected Month
+</button>
+
+<div id="monthlySummary" class="summary" style="margin-top:15px">
+    Current month selected.
+</div>
 
 <div class="table-wrapper">
 
 <table>
 
 <thead>
-
 <tr>
-
 <th>Employee</th>
-
 <th>Employee ID</th>
-
+<th>Status</th>
 <th>IN</th>
-
 <th>OUT</th>
-
-<th>Selfie</th>
-
-<th>Location</th>
-
+<th>Duration</th>
+<th>IN Selfie</th>
+<th>OUT Selfie</th>
+<th>IN Location</th>
+<th>OUT Location</th>
+<th>History</th>
 </tr>
-
 </thead>
-
 
 <tbody id="attendanceTable"></tbody>
 
@@ -912,36 +544,32 @@ Loading...
 
 </div>
 
+<div id="historySection" class="card hidden">
+    <h3 id="historyTitle">Location History</h3>
+    <div id="historyContent" class="history-box"></div>
+</div>
 
 <p class="note">
-
-Employee list database se automatically load hoti hai.
-
+    Employee list database se automatically load hoti hai.
+    Location history MARK IN se MARK OUT tak ke recorded GPS points dikhati hai.
 </p>
 
 </div>
-
 </div>
 
-
 </div>
-
 
 <script>
-
 
 /* =====================================================
    SUPABASE
 ===================================================== */
 
-
 const SUPABASE_URL =
     "https://edcrxbzpubjmyeecrbfd.supabase.co";
 
-
 const SUPABASE_KEY =
     "sb_publishable_Yn2d81cVel9qO_2y_p4kSg_DqxB1U1o";
-
 
 const supabaseClient =
     window.supabase.createClient(
@@ -958,26 +586,32 @@ const ADMIN_PASSWORD = "sahithi123";
 
 
 /* =====================================================
-   GLOBAL VARIABLES
+   GLOBALS
 ===================================================== */
 
 let currentEmployee = null;
-
 let cameraStream = null;
-
 let capturedSelfieBlob = null;
+
+let attendanceMode = null;
+// "in" or "out"
+
+let currentAttendanceId = null;
+
+let locationWatchId = null;
+let trackingTimer = null;
+let lastLocationUpload = 0;
+
+let deferredInstallPrompt = null;
 
 
 /* =====================================================
    PWA
 ===================================================== */
 
-let deferredInstallPrompt = null;
-
-
 window.addEventListener(
     "beforeinstallprompt",
-    function(event) {
+    function(event){
 
         event.preventDefault();
 
@@ -986,14 +620,12 @@ window.addEventListener(
         document
             .getElementById("installCard")
             .classList.remove("hidden");
-
     }
 );
 
+async function installApp(){
 
-async function installApp() {
-
-    if (!deferredInstallPrompt) {
+    if(!deferredInstallPrompt){
 
         alert(
             "Browser menu se 'Install App' ya 'Add to Home Screen' select karo."
@@ -1002,38 +634,24 @@ async function installApp() {
         return;
     }
 
-
     deferredInstallPrompt.prompt();
 
-
-    const result =
-        await deferredInstallPrompt.userChoice;
-
-
-    console.log(
-        "Install result:",
-        result.outcome
-    );
-
+    await deferredInstallPrompt.userChoice;
 
     deferredInstallPrompt = null;
-
 
     document
         .getElementById("installCard")
         .classList.add("hidden");
-
 }
-
 
 window.addEventListener(
     "appinstalled",
-    function() {
+    function(){
 
         document
             .getElementById("installCard")
             .classList.add("hidden");
-
     }
 );
 
@@ -1042,103 +660,80 @@ window.addEventListener(
    SERVICE WORKER
 ===================================================== */
 
-if ("serviceWorker" in navigator) {
+if("serviceWorker" in navigator){
 
     window.addEventListener(
         "load",
-        function() {
+        function(){
 
             navigator.serviceWorker
                 .register("./sw.js")
-                .catch(
-                    function(error) {
-
-                        console.error(
-                            "Service Worker Error:",
-                            error
-                        );
-
-                    }
-                );
-
+                .catch(function(error){
+                    console.error(
+                        "Service Worker Error:",
+                        error
+                    );
+                });
         }
     );
-
 }
 
 
 /* =====================================================
-   DATE
+   DATE / TIME
 ===================================================== */
 
-function todayKey() {
+function todayKey(){
 
     const d = new Date();
-
 
     return (
         d.getFullYear() +
         "-" +
-        String(d.getMonth() + 1).padStart(2, "0") +
+        String(d.getMonth()+1).padStart(2,"0") +
         "-" +
-        String(d.getDate()).padStart(2, "0")
+        String(d.getDate()).padStart(2,"0")
     );
-
 }
 
-
-/* =====================================================
-   TIME
-===================================================== */
-
-function currentTime() {
+function currentTime(){
 
     return new Date().toLocaleTimeString(
         "en-IN",
         {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
+            hour:"2-digit",
+            minute:"2-digit",
+            hour12:true
         }
     );
-
 }
 
-
-/* =====================================================
-   DATE TIME
-===================================================== */
-
-function updateDateTime() {
+function updateDateTime(){
 
     document.getElementById("date").innerText =
         new Date().toLocaleDateString(
             "en-IN",
             {
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
+                weekday:"long",
+                day:"2-digit",
+                month:"long",
+                year:"numeric"
             }
         );
-
 
     document.getElementById("time").innerText =
         new Date().toLocaleTimeString(
             "en-IN",
             {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit",
+                hour12:true
             }
         );
-
 }
 
-
-setInterval(updateDateTime, 1000);
-
+setInterval(updateDateTime,1000);
 updateDateTime();
 
 
@@ -1146,51 +741,42 @@ updateDateTime();
    TABS
 ===================================================== */
 
-function showEmployee() {
+function showEmployee(){
 
     document
         .getElementById("employeePanel")
         .classList.remove("hidden");
 
-
     document
         .getElementById("adminPanel")
         .classList.add("hidden");
-
 
     document
         .getElementById("employeeTab")
         .classList.add("active");
 
-
     document
         .getElementById("adminTab")
         .classList.remove("active");
-
 }
 
-
-function showAdmin() {
+function showAdmin(){
 
     document
         .getElementById("employeePanel")
         .classList.add("hidden");
 
-
     document
         .getElementById("adminPanel")
         .classList.remove("hidden");
-
 
     document
         .getElementById("employeeTab")
         .classList.remove("active");
 
-
     document
         .getElementById("adminTab")
         .classList.add("active");
-
 }
 
 
@@ -1198,7 +784,7 @@ function showAdmin() {
    EMPLOYEE LOGIN
 ===================================================== */
 
-async function employeeLogin() {
+async function employeeLogin(){
 
     const code =
         document
@@ -1207,15 +793,13 @@ async function employeeLogin() {
             .trim()
             .toUpperCase();
 
-
     const pin =
         document
             .getElementById("employeePin")
             .value
             .trim();
 
-
-    if (!code || !pin) {
+    if(!code || !pin){
 
         alert(
             "Employee ID aur PIN dono enter karo."
@@ -1223,7 +807,6 @@ async function employeeLogin() {
 
         return;
     }
-
 
     const {
         data,
@@ -1238,13 +821,9 @@ async function employeeLogin() {
             )
             .limit(1);
 
+    if(error){
 
-    if (error) {
-
-        console.error(
-            "Login Error:",
-            error
-        );
+        console.error(error);
 
         alert(
             "Database error: " +
@@ -1254,51 +833,39 @@ async function employeeLogin() {
         return;
     }
 
+    if(!data || !data.length){
 
-    if (!data || data.length === 0) {
-
-        alert(
-            "Invalid Employee ID."
-        );
+        alert("Invalid Employee ID.");
 
         return;
     }
-
 
     const employee = data[0];
 
-
-    if (
+    if(
         String(employee.pin || "").trim() !==
         String(pin).trim()
-    ) {
+    ){
 
-        alert(
-            "Wrong PIN."
-        );
+        alert("Wrong PIN.");
 
         return;
     }
 
-
     currentEmployee = employee;
-
 
     document
         .getElementById("employeeLogin")
         .classList.add("hidden");
 
-
     document
         .getElementById("employeeArea")
         .classList.remove("hidden");
-
 
     document
         .getElementById("employeeName")
         .innerText =
         employee.employee_name;
-
 
     document
         .getElementById("employeeCodeDisplay")
@@ -1306,15 +873,12 @@ async function employeeLogin() {
         "Employee ID: " +
         employee.employee_code;
 
-
     document
         .getElementById("locationStatus")
         .innerText =
         "📍 Location: Ready";
 
-
     await showStatus();
-
 }
 
 
@@ -1322,41 +886,83 @@ async function employeeLogin() {
    LOGOUT
 ===================================================== */
 
-function employeeLogout() {
+function employeeLogout(){
+
+    stopLocationTracking();
 
     closeCamera();
 
-
     currentEmployee = null;
-
     capturedSelfieBlob = null;
-
+    currentAttendanceId = null;
+    attendanceMode = null;
 
     document
         .getElementById("employeeArea")
         .classList.add("hidden");
 
-
     document
         .getElementById("employeeLogin")
         .classList.remove("hidden");
-
 
     document
         .getElementById("employeeCode")
         .value = "";
 
-
     document
         .getElementById("employeePin")
         .value = "";
-
 
     document
         .getElementById("status")
         .innerText =
         "Aaj attendance mark nahi hui.";
 
+    document
+        .getElementById("liveTrackingBox")
+        .classList.add("hidden");
+}
+
+
+/* =====================================================
+   GET TODAY RECORD
+===================================================== */
+
+async function getTodayRecord(){
+
+    if(!currentEmployee) return null;
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("ATTENDANCE")
+            .select("*")
+            .eq(
+                "employee_name",
+                currentEmployee.employee_name
+            )
+            .eq(
+                "attendance_date",
+                todayKey()
+            )
+            .order(
+                "id",
+                {ascending:false}
+            )
+            .limit(1);
+
+    if(error){
+
+        console.error(error);
+
+        return null;
+    }
+
+    return data && data.length
+        ? data[0]
+        : null;
 }
 
 
@@ -1364,164 +970,110 @@ function employeeLogout() {
    STATUS
 ===================================================== */
 
-async function showStatus() {
+async function showStatus(){
 
-    if (!currentEmployee) return;
-
+    if(!currentEmployee) return;
 
     const status =
         document.getElementById("status");
 
-
-    status.innerText =
-        "Checking attendance...";
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("ATTENDANCE")
-            .select("*")
-            .eq(
-                "employee_name",
-                currentEmployee.employee_name
-            )
-            .eq(
-                "attendance_date",
-                todayKey()
-            )
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-            .limit(1);
-
-
-    if (error) {
-
-        console.error(error);
-
-        status.innerText =
-            "Attendance status load nahi hui.";
-
-        return;
-    }
-
-
     const record =
-        data && data.length
-            ? data[0]
-            : null;
+        await getTodayRecord();
 
+    status.classList.remove(
+        "status-duty",
+        "status-complete"
+    );
 
-    if (!record) {
+    if(!record){
 
         status.innerText =
             "Aaj attendance mark nahi hui.";
 
+        setButtons(false,false);
+
         return;
     }
 
+    if(record.in_time && !record.out_time){
 
-    if (
-        record.in_time &&
-        record.out_time
-    ) {
+        status.classList.add("status-duty");
 
         status.innerText =
-            "IN: " +
-            record.in_time +
-            " | OUT: " +
-            record.out_time;
-
-    }
-
-    else if (record.in_time) {
-
-        status.innerText =
-            "IN: " +
+            "🟢 ON DUTY | IN: " +
             record.in_time +
             " | OUT abhi nahi hua.";
 
+        currentAttendanceId = record.id;
+
+        setButtons(false,true);
+
+        startLocationTracking(record.id);
+
+        return;
     }
 
-    else {
+    if(record.in_time && record.out_time){
+
+        status.classList.add("status-complete");
 
         status.innerText =
-            "Aaj attendance mark nahi hui.";
+            "✅ DUTY COMPLETE | IN: " +
+            record.in_time +
+            " | OUT: " +
+            record.out_time +
+            " | Duration: " +
+            formatDuration(
+                getRecordDurationMinutes(record)
+            );
 
+        stopLocationTracking();
+
+        setButtons(false,false);
+
+        return;
     }
 
+    setButtons(false,false);
 }
 
 
 /* =====================================================
-   START ATTENDANCE
+   BUTTON STATE
 ===================================================== */
 
-async function startAttendance() {
+function setButtons(
+    markInEnabled,
+    markOutEnabled
+){
 
-    if (!currentEmployee) {
+    document
+        .getElementById("markInButton")
+        .disabled = !markInEnabled;
 
-        alert(
-            "Pehle Employee Login karo."
-        );
-
-        return;
-    }
-
-
-    /* Check existing attendance */
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("ATTENDANCE")
-            .select("*")
-            .eq(
-                "employee_name",
-                currentEmployee.employee_name
-            )
-            .eq(
-                "attendance_date",
-                todayKey()
-            )
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-            .limit(1);
+    document
+        .getElementById("markOutButton")
+        .disabled = !markOutEnabled;
+}
 
 
-    if (error) {
+/* =====================================================
+   MARK IN
+===================================================== */
 
-        alert(
-            "Database error: " +
-            error.message
-        );
+async function startAttendance(){
+
+    if(!currentEmployee){
+
+        alert("Pehle Employee Login karo.");
 
         return;
     }
-
 
     const existing =
-        data && data.length
-            ? data[0]
-            : null;
+        await getTodayRecord();
 
-
-    if (
-        existing &&
-        existing.in_time
-    ) {
+    if(existing && existing.in_time){
 
         alert(
             "Aaj ka MARK IN already ho chuka hai."
@@ -1530,26 +1082,64 @@ async function startAttendance() {
         return;
     }
 
-
-    /* Open camera */
+    attendanceMode = "in";
 
     await openCamera();
-
 }
 
 
 /* =====================================================
-   OPEN CAMERA
+   MARK OUT START
 ===================================================== */
 
-async function openCamera() {
+async function startMarkOut(){
 
-    try {
+    if(!currentEmployee){
 
-        if (
+        alert("Pehle Employee Login karo.");
+
+        return;
+    }
+
+    const record =
+        await getTodayRecord();
+
+    if(!record || !record.in_time){
+
+        alert("Pehle MARK IN karo.");
+
+        return;
+    }
+
+    if(record.out_time){
+
+        alert(
+            "Aaj ka MARK OUT already ho chuka hai."
+        );
+
+        return;
+    }
+
+    currentAttendanceId = record.id;
+
+    attendanceMode = "out";
+
+    await openCamera();
+}
+
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+async function openCamera(){
+
+    try{
+
+        if(
             !navigator.mediaDevices ||
             !navigator.mediaDevices.getUserMedia
-        ) {
+        ){
 
             alert(
                 "Camera is browser/device me available nahi hai."
@@ -1558,62 +1148,46 @@ async function openCamera() {
             return;
         }
 
-
         cameraStream =
             await navigator.mediaDevices.getUserMedia({
 
-                video: {
-                    facingMode: "user",
-                    width: {
-                        ideal: 1280
-                    },
-                    height: {
-                        ideal: 720
-                    }
+                video:{
+                    facingMode:"user",
+                    width:{ideal:1280},
+                    height:{ideal:720}
                 },
 
-                audio: false
-
+                audio:false
             });
-
 
         const video =
             document.getElementById(
                 "cameraVideo"
             );
 
-
         video.srcObject =
             cameraStream;
-
 
         document
             .getElementById("cameraSection")
             .classList.remove("hidden");
 
-
         document
             .getElementById("locationStatus")
             .innerText =
-            "📸 Camera ready. Selfie capture karo.";
-
+            attendanceMode === "out"
+                ? "📸 OUT selfie capture karo."
+                : "📸 IN selfie capture karo.";
 
     }
+    catch(error){
 
-    catch (error) {
-
-        console.error(
-            "Camera Error:",
-            error
-        );
-
+        console.error(error);
 
         alert(
             "Camera permission Allow karo."
         );
-
     }
-
 }
 
 
@@ -1621,30 +1195,27 @@ async function openCamera() {
    CAPTURE SELFIE
 ===================================================== */
 
-function captureSelfie() {
+function captureSelfie(){
 
     const video =
         document.getElementById(
             "cameraVideo"
         );
 
-
     const canvas =
         document.getElementById(
             "cameraCanvas"
         );
-
 
     const preview =
         document.getElementById(
             "selfiePreview"
         );
 
-
-    if (
+    if(
         !video.videoWidth ||
         !video.videoHeight
-    ) {
+    ){
 
         alert(
             "Camera ready hone ka wait karo."
@@ -1653,34 +1224,23 @@ function captureSelfie() {
         return;
     }
 
-
     canvas.width =
         video.videoWidth;
-
 
     canvas.height =
         video.videoHeight;
 
-
     const ctx =
         canvas.getContext("2d");
 
-
-    /*
-       Mirror effect for natural selfie.
-    */
+    ctx.save();
 
     ctx.translate(
         canvas.width,
         0
     );
 
-
-    ctx.scale(
-        -1,
-        1
-    );
-
+    ctx.scale(-1,1);
 
     ctx.drawImage(
         video,
@@ -1690,12 +1250,13 @@ function captureSelfie() {
         canvas.height
     );
 
+    ctx.restore();
 
     canvas.toBlob(
 
-        function(blob) {
+        function(blob){
 
-            if (!blob) {
+            if(!blob){
 
                 alert(
                     "Selfie capture nahi hui."
@@ -1704,41 +1265,32 @@ function captureSelfie() {
                 return;
             }
 
-
             capturedSelfieBlob =
                 blob;
 
-
             preview.src =
                 URL.createObjectURL(blob);
-
 
             preview.classList.remove(
                 "hidden"
             );
 
+            closeCamera();
 
             document
                 .getElementById(
                     "locationStatus"
                 )
                 .innerText =
-                "✅ Selfie captured. Location li ja rahi hai...";
+                "📍 GPS location li ja rahi hai...";
 
-
-            closeCamera();
-
-
-            getGPSAndSave();
+            getGPSForAttendance();
 
         },
 
         "image/jpeg",
-
-        0.82
-
+        .85
     );
-
 }
 
 
@@ -1746,48 +1298,39 @@ function captureSelfie() {
    CLOSE CAMERA
 ===================================================== */
 
-function closeCamera() {
+function closeCamera(){
 
-    if (cameraStream) {
+    if(cameraStream){
 
         cameraStream
             .getTracks()
             .forEach(
-                function(track) {
-
-                    track.stop();
-
-                }
+                track => track.stop()
             );
 
         cameraStream = null;
-
     }
-
 
     const video =
         document.getElementById(
             "cameraVideo"
         );
 
-
     video.srcObject = null;
-
 
     document
         .getElementById("cameraSection")
         .classList.add("hidden");
-
 }
 
 
 /* =====================================================
-   GPS
+   GPS FOR IN / OUT
 ===================================================== */
 
-function getGPSAndSave() {
+function getGPSForAttendance(){
 
-    if (!navigator.geolocation) {
+    if(!navigator.geolocation){
 
         alert(
             "Is phone/browser me GPS available nahi hai."
@@ -1796,225 +1339,176 @@ function getGPSAndSave() {
         return;
     }
 
-
-    document
-        .getElementById("locationStatus")
-        .innerText =
-        "📍 GPS location li ja rahi hai...";
-
-
     navigator.geolocation.getCurrentPosition(
 
-        async function(position) {
+        async function(position){
 
             const latitude =
                 position.coords.latitude;
 
-
             const longitude =
                 position.coords.longitude;
-
 
             const accuracy =
                 position.coords.accuracy;
 
-
             document
-                .getElementById("locationStatus")
+                .getElementById(
+                    "locationStatus"
+                )
                 .innerText =
-                "📍 Location captured. Attendance save ho rahi hai...";
+                "📍 GPS captured. Saving...";
 
+            if(attendanceMode === "in"){
 
-            await saveAttendance(
+                await saveMarkIn(
+                    latitude,
+                    longitude,
+                    accuracy
+                );
 
-                latitude,
-                longitude,
-                accuracy
+            }
+            else if(attendanceMode === "out"){
 
-            );
-
+                await saveMarkOut(
+                    latitude,
+                    longitude,
+                    accuracy
+                );
+            }
         },
 
-
-        function(error) {
+        function(error){
 
             console.error(error);
 
-
             capturedSelfieBlob = null;
 
-
-            if (error.code === 1) {
+            if(error.code === 1){
 
                 alert(
                     "Location permission Allow karo."
                 );
-
             }
-
-            else if (error.code === 2) {
+            else if(error.code === 2){
 
                 alert(
                     "Phone ka GPS/Location ON karo."
                 );
-
             }
-
-            else if (error.code === 3) {
+            else if(error.code === 3){
 
                 alert(
-                    "Location timeout. Dobara MARK IN karo."
+                    "Location timeout. Dobara try karo."
                 );
-
             }
-
-            else {
+            else{
 
                 alert(
                     "Location error."
                 );
-
             }
 
-
             document
-                .getElementById("locationStatus")
+                .getElementById(
+                    "locationStatus"
+                )
                 .innerText =
                 "📍 Location not captured.";
-
         },
 
-
         {
-
-            enableHighAccuracy: true,
-
-            timeout: 15000,
-
-            maximumAge: 0
-
+            enableHighAccuracy:true,
+            timeout:20000,
+            maximumAge:0
         }
-
     );
-
 }
 
 
 /* =====================================================
-   SAVE ATTENDANCE
+   UPLOAD SELFIE
 ===================================================== */
 
-async function saveAttendance(
+async function uploadSelfie(prefix){
+
+    if(!capturedSelfieBlob){
+
+        throw new Error(
+            "Selfie missing hai."
+        );
+    }
+
+    const fileName =
+        currentEmployee.employee_code +
+        "_" +
+        todayKey() +
+        "_" +
+        prefix +
+        "_" +
+        Date.now() +
+        ".jpg";
+
+    const filePath =
+        "attendance/" +
+        fileName;
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .storage
+            .from("attendance-selfies")
+            .upload(
+                filePath,
+                capturedSelfieBlob,
+                {
+                    contentType:"image/jpeg",
+                    upsert:false
+                }
+            );
+
+    if(error){
+
+        throw new Error(
+            "Selfie upload nahi hui: " +
+            error.message
+        );
+    }
+
+    const {
+        data
+    } =
+        supabaseClient
+            .storage
+            .from("attendance-selfies")
+            .getPublicUrl(filePath);
+
+    return data.publicUrl;
+}
+
+
+/* =====================================================
+   SAVE MARK IN
+===================================================== */
+
+async function saveMarkIn(
     latitude,
     longitude,
     accuracy
-) {
+){
 
-    if (!capturedSelfieBlob) {
-
-        alert(
-            "Selfie missing hai. Dobara MARK IN karo."
-        );
-
-        return;
-    }
-
-
-    try {
-
-
-        /* =========================
-           UPLOAD SELFIE
-        ========================= */
-
-
-        const fileName =
-
-            currentEmployee.employee_code +
-
-            "_" +
-
-            todayKey() +
-
-            "_" +
-
-            Date.now() +
-
-            ".jpg";
-
-
-        const filePath =
-
-            "attendance/" +
-
-            fileName;
-
-
-        const {
-            error: uploadError
-        } =
-            await supabaseClient
-                .storage
-                .from(
-                    "attendance-selfies"
-                )
-                .upload(
-                    filePath,
-                    capturedSelfieBlob,
-                    {
-                        contentType:
-                            "image/jpeg",
-
-                        upsert: false
-                    }
-                );
-
-
-        if (uploadError) {
-
-            console.error(
-                uploadError
-            );
-
-
-            alert(
-                "Selfie upload nahi hui: " +
-                uploadError.message
-            );
-
-            return;
-        }
-
-
-        /* =========================
-           PUBLIC SELFIE URL
-        ========================= */
-
-
-        const {
-            data: publicData
-        } =
-            supabaseClient
-                .storage
-                .from(
-                    "attendance-selfies"
-                )
-                .getPublicUrl(
-                    filePath
-                );
-
+    try{
 
         const selfieURL =
-            publicData.publicUrl;
+            await uploadSelfie("IN");
 
-
-        /* =========================
-           SAVE DATABASE
-        ========================= */
-
+        const now =
+            new Date();
 
         const {
-            error: insertError
+            data,
+            error
         } =
             await supabaseClient
                 .from("ATTENDANCE")
@@ -2042,177 +1536,549 @@ async function saveAttendance(
                         accuracy,
 
                     selfie_url:
-                        selfieURL
+                        selfieURL,
 
-                });
+                    in_selfie_url:
+                        selfieURL,
 
+                    in_latitude:
+                        latitude,
 
-        if (insertError) {
+                    in_longitude:
+                        longitude,
 
-            console.error(
-                insertError
-            );
+                    in_accuracy:
+                        accuracy,
 
+                    in_at:
+                        now.toISOString(),
+
+                    out_selfie_url:
+                        null,
+
+                    out_latitude:
+                        null,
+
+                    out_longitude:
+                        null,
+
+                    out_accuracy:
+                        null,
+
+                    out_at:
+                        null
+                })
+                .select()
+                .single();
+
+        if(error){
+
+            console.error(error);
 
             alert(
-                "Attendance save nahi hui: " +
-                insertError.message
+                "MARK IN save nahi hua: " +
+                error.message
             );
 
             return;
         }
 
+        currentAttendanceId =
+            data.id;
 
         capturedSelfieBlob = null;
-
 
         document
             .getElementById(
                 "locationStatus"
             )
             .innerText =
-            "✅ GPS + Selfie saved";
-
+            "✅ IN Selfie + GPS saved";
 
         alert(
-            "🟢 MARK IN successfully ho gaya.\n\n📸 Selfie saved\n📍 GPS saved"
+            "🟢 MARK IN successfully ho gaya.\n\n" +
+            "📸 IN Selfie saved\n" +
+            "📍 IN GPS saved\n" +
+            "🟢 Live tracking started"
         );
 
+        startLocationTracking(
+            data.id
+        );
 
         await showStatus();
 
     }
-
-    catch (error) {
+    catch(error){
 
         console.error(error);
 
-
         alert(
-            "Attendance process failed: " +
             error.message
         );
-
     }
-
 }
 
 
 /* =====================================================
-   MARK OUT
+   SAVE MARK OUT
 ===================================================== */
 
-async function markOut() {
+async function saveMarkOut(
+    latitude,
+    longitude,
+    accuracy
+){
 
-    if (!currentEmployee) {
+    try{
+
+        const record =
+            await getTodayRecord();
+
+        if(!record){
+
+            alert(
+                "Attendance record nahi mila."
+            );
+
+            return;
+        }
+
+        const selfieURL =
+            await uploadSelfie("OUT");
+
+        const now =
+            new Date();
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("ATTENDANCE")
+                .update({
+
+                    out_time:
+                        currentTime(),
+
+                    out_selfie_url:
+                        selfieURL,
+
+                    out_latitude:
+                        latitude,
+
+                    out_longitude:
+                        longitude,
+
+                    out_accuracy:
+                        accuracy,
+
+                    out_at:
+                        now.toISOString()
+                })
+                .eq(
+                    "id",
+                    record.id
+                );
+
+        if(error){
+
+            console.error(error);
+
+            alert(
+                "MARK OUT save nahi hua: " +
+                error.message
+            );
+
+            return;
+        }
+
+        capturedSelfieBlob = null;
+
+        stopLocationTracking();
+
+        document
+            .getElementById(
+                "locationStatus"
+            )
+            .innerText =
+            "✅ OUT Selfie + GPS saved";
 
         alert(
-            "Pehle Employee Login karo."
+            "🔴 MARK OUT successfully ho gaya.\n\n" +
+            "📸 OUT Selfie saved\n" +
+            "📍 OUT GPS saved\n" +
+            "📍 Location tracking stopped"
         );
+
+        await showStatus();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            error.message
+        );
+    }
+}
+
+
+/* =====================================================
+   LIVE LOCATION TRACKING
+===================================================== */
+
+function startLocationTracking(
+    attendanceId
+){
+
+    if(!navigator.geolocation){
 
         return;
     }
 
+    currentAttendanceId =
+        attendanceId;
+
+    stopLocationTracking();
+
+    document
+        .getElementById(
+            "liveTrackingBox"
+        )
+        .classList.remove("hidden");
+
+    document
+        .getElementById(
+            "liveLocationText"
+        )
+        .innerText =
+        "GPS tracking started...";
+
+    locationWatchId =
+        navigator.geolocation.watchPosition(
+
+            function(position){
+
+                const now =
+                    Date.now();
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+                const accuracy =
+                    position.coords.accuracy;
+
+                document
+                    .getElementById(
+                        "liveLocationText"
+                    )
+                    .innerText =
+                    "Lat: " +
+                    latitude.toFixed(6) +
+                    " | Lng: " +
+                    longitude.toFixed(6) +
+                    " | Accuracy: " +
+                    Math.round(accuracy) +
+                    "m";
+
+                /*
+                   Minimum 20 seconds gap between DB records.
+                   This avoids creating thousands of unnecessary rows.
+                */
+
+                if(
+                    now - lastLocationUpload >= 20000
+                ){
+
+                    lastLocationUpload =
+                        now;
+
+                    saveLocationPoint(
+                        attendanceId,
+                        latitude,
+                        longitude,
+                        accuracy
+                    );
+                }
+            },
+
+            function(error){
+
+                console.error(
+                    "Tracking error:",
+                    error
+                );
+
+                document
+                    .getElementById(
+                        "liveLocationText"
+                    )
+                    .innerText =
+                    "GPS signal waiting...";
+            },
+
+            {
+                enableHighAccuracy:true,
+                maximumAge:10000,
+                timeout:20000
+            }
+        );
+
+    /*
+       Extra timer to request a fresh position
+       periodically while page is active.
+    */
+
+    trackingTimer =
+        setInterval(
+            function(){
+
+                navigator.geolocation.getCurrentPosition(
+                    function(position){
+
+                        const latitude =
+                            position.coords.latitude;
+
+                        const longitude =
+                            position.coords.longitude;
+
+                        const accuracy =
+                            position.coords.accuracy;
+
+                        saveLocationPoint(
+                            attendanceId,
+                            latitude,
+                            longitude,
+                            accuracy
+                        );
+                    },
+                    function(error){
+                        console.log(
+                            "Periodic GPS:",
+                            error
+                        );
+                    },
+                    {
+                        enableHighAccuracy:true,
+                        maximumAge:10000,
+                        timeout:20000
+                    }
+                );
+
+            },
+            30000
+        );
+}
+
+
+/* =====================================================
+   SAVE GPS POINT
+===================================================== */
+
+async function saveLocationPoint(
+    attendanceId,
+    latitude,
+    longitude,
+    accuracy
+){
+
+    if(!attendanceId || !currentEmployee){
+
+        return;
+    }
 
     const {
-        data,
         error
     } =
         await supabaseClient
-            .from("ATTENDANCE")
-            .select("*")
-            .eq(
-                "employee_name",
-                currentEmployee.employee_name
-            )
-            .eq(
-                "attendance_date",
-                todayKey()
-            )
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-            .limit(1);
+            .from("attendance_locations")
+            .insert({
+
+                employee_id:
+                    String(
+                        currentEmployee.employee_code
+                    ),
+
+                attendance_id:
+                    attendanceId,
+
+                latitude:
+                    latitude,
+
+                longitude:
+                    longitude,
+
+                accuracy:
+                    accuracy,
+
+                recorded_at:
+                    new Date().toISOString()
+            });
+
+    if(error){
+
+        console.error(
+            "Location save error:",
+            error
+        );
+    }
+}
 
 
-    if (error) {
+/* =====================================================
+   STOP TRACKING
+===================================================== */
 
-        alert(
-            "Database error: " +
-            error.message
+function stopLocationTracking(){
+
+    if(locationWatchId !== null){
+
+        navigator.geolocation.clearWatch(
+            locationWatchId
         );
 
-        return;
+        locationWatchId = null;
     }
 
+    if(trackingTimer){
 
-    const record =
-        data && data.length
-            ? data[0]
-            : null;
-
-
-    if (
-        !record ||
-        !record.in_time
-    ) {
-
-        alert(
-            "Pehle MARK IN karo."
+        clearInterval(
+            trackingTimer
         );
 
-        return;
+        trackingTimer = null;
     }
 
+    document
+        .getElementById(
+            "liveTrackingBox"
+        )
+        .classList.add("hidden");
 
-    if (record.out_time) {
+    lastLocationUpload = 0;
+}
 
-        alert(
-            "Aaj ka MARK OUT already ho chuka hai."
+
+/* =====================================================
+   DURATION
+===================================================== */
+
+function getRecordDurationMinutes(
+    record
+){
+
+    if(
+        record.in_at &&
+        record.out_at
+    ){
+
+        const start =
+            new Date(record.in_at);
+
+        const end =
+            new Date(record.out_at);
+
+        return Math.max(
+            0,
+            Math.round(
+                (end - start) / 60000
+            )
         );
-
-        return;
     }
 
+    /*
+       Fallback for old records.
+    */
 
-    const {
-        error: updateError
-    } =
-        await supabaseClient
-            .from("ATTENDANCE")
-            .update({
+    if(
+        record.in_time &&
+        record.out_time
+    ){
 
-                out_time:
-                    currentTime()
-
-            })
-            .eq(
-                "id",
-                record.id
+        const start =
+            parseTimeToday(
+                record.in_time
             );
 
+        const end =
+            parseTimeToday(
+                record.out_time
+            );
 
-    if (updateError) {
+        if(start && end){
 
-        alert(
-            "MARK OUT save nahi hua: " +
-            updateError.message
-        );
-
-        return;
+            return Math.max(
+                0,
+                Math.round(
+                    (end - start) / 60000
+                )
+            );
+        }
     }
 
+    return null;
+}
 
-    alert(
-        "🔴 MARK OUT successfully ho gaya."
+function parseTimeToday(
+    timeString
+){
+
+    if(!timeString) return null;
+
+    const match =
+        timeString.match(
+            /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i
+        );
+
+    if(!match) return null;
+
+    let hour =
+        parseInt(match[1],10);
+
+    const minute =
+        parseInt(match[2],10);
+
+    const ampm =
+        match[3].toUpperCase();
+
+    if(ampm === "PM" && hour !== 12){
+        hour += 12;
+    }
+
+    if(ampm === "AM" && hour === 12){
+        hour = 0;
+    }
+
+    const d =
+        new Date();
+
+    d.setHours(
+        hour,
+        minute,
+        0,
+        0
     );
 
+    return d;
+}
 
-    await showStatus();
+function formatDuration(minutes){
 
+    if(minutes === null || minutes === undefined){
+        return "—";
+    }
+
+    const h =
+        Math.floor(minutes / 60);
+
+    const m =
+        minutes % 60;
+
+    return h + "h " + m + "m";
 }
 
 
@@ -2220,7 +2086,7 @@ async function markOut() {
    ADMIN LOGIN
 ===================================================== */
 
-async function loginAdmin() {
+async function loginAdmin(){
 
     const password =
         document
@@ -2229,11 +2095,7 @@ async function loginAdmin() {
             )
             .value;
 
-
-    if (
-        password !==
-        ADMIN_PASSWORD
-    ) {
+    if(password !== ADMIN_PASSWORD){
 
         alert(
             "Wrong Admin Password."
@@ -2242,13 +2104,11 @@ async function loginAdmin() {
         return;
     }
 
-
     document
         .getElementById(
             "adminLoginArea"
         )
         .classList.add("hidden");
-
 
     document
         .getElementById(
@@ -2256,17 +2116,30 @@ async function loginAdmin() {
         )
         .classList.remove("hidden");
 
+    const month =
+        new Date();
+
+    document
+        .getElementById("monthSelector")
+        .value =
+        month.getFullYear() +
+        "-" +
+        String(
+            month.getMonth()+1
+        ).padStart(2,"0");
 
     await loadAdmin();
-
 }
 
 
 /* =====================================================
-   ADMIN DATA
+   ADMIN TODAY
 ===================================================== */
 
-async function loadAdmin() {
+async function loadAdmin(){
+
+    const date =
+        todayKey();
 
     const {
         data: attendanceData,
@@ -2277,17 +2150,14 @@ async function loadAdmin() {
             .select("*")
             .eq(
                 "attendance_date",
-                todayKey()
+                date
             )
             .order(
                 "id",
-                {
-                    ascending: true
-                }
+                {ascending:true}
             );
 
-
-    if (attendanceError) {
+    if(attendanceError){
 
         alert(
             "Admin data load nahi hui: " +
@@ -2296,7 +2166,6 @@ async function loadAdmin() {
 
         return;
     }
-
 
     const {
         data: employees,
@@ -2307,13 +2176,10 @@ async function loadAdmin() {
             .select("*")
             .order(
                 "employee_name",
-                {
-                    ascending: true
-                }
+                {ascending:true}
             );
 
-
-    if (employeeError) {
+    if(employeeError){
 
         alert(
             "Employee list load nahi hui: " +
@@ -2323,276 +2189,744 @@ async function loadAdmin() {
         return;
     }
 
+    renderAttendanceTable(
+        employees || [],
+        attendanceData || []
+    );
+
+    updateSummary(
+        employees || [],
+        attendanceData || []
+    );
+}
+
+
+/* =====================================================
+   RENDER TODAY TABLE
+===================================================== */
+
+function renderAttendanceTable(
+    employees,
+    attendanceData
+){
 
     const table =
         document.getElementById(
             "attendanceTable"
         );
 
-
     table.innerHTML = "";
 
-
-    let present = 0;
-
-
-    (employees || []).forEach(
-
-        function(employee) {
-
+    employees.forEach(
+        function(employee){
 
             const records =
                 attendanceData.filter(
-
-                    function(item) {
+                    function(item){
 
                         return (
                             item.employee_name ===
                             employee.employee_name
                         );
-
                     }
-
                 );
-
 
             const record =
                 records.length
-                    ? records[
-                        records.length - 1
-                    ]
+                    ? records[records.length-1]
                     : null;
 
-
-            if (
-                record &&
-                record.in_time
-            ) {
-
-                present++;
-
-            }
-
-
-            /* =========================
-               SELFIE
-            ========================= */
-
-
-            let selfieHTML =
-                "—";
-
-
-            if (
-                record &&
-                record.selfie_url
-            ) {
-
-                selfieHTML =
-
-                    '<a href="' +
-                    escapeAttribute(
-                        record.selfie_url
-                    ) +
-                    '" target="_blank" rel="noopener noreferrer">' +
-
-                    '<img src="' +
-                    escapeAttribute(
-                        record.selfie_url
-                    ) +
-                    '" class="selfie-thumb" alt="Selfie">' +
-
-                    '</a>';
-
-            }
-
-
-            /* =========================
-               LOCATION
-            ========================= */
-
-
-            let locationHTML =
-                "—";
-
-
-            if (
-                record &&
-                record.latitude !== null &&
-                record.longitude !== null
-            ) {
-
-                const mapURL =
-                    "https://www.google.com/maps?q=" +
-                    encodeURIComponent(
-                        record.latitude +
-                        "," +
-                        record.longitude
-                    );
-
-
-                locationHTML =
-
-                    '<a href="' +
-                    escapeAttribute(
-                        mapURL
-                    ) +
-                    '" target="_blank" rel="noopener noreferrer">' +
-
-                    "📍 View Location" +
-
-                    "</a>";
-
-            }
-
-
             const row =
-                document.createElement(
-                    "tr"
-                );
+                document.createElement("tr");
 
+            let statusHTML =
+                '<span class="badge badge-absent">ABSENT</span>';
+
+            if(record && record.in_time && record.out_time){
+
+                statusHTML =
+                    '<span class="badge badge-present">PRESENT</span>';
+            }
+            else if(record && record.in_time){
+
+                statusHTML =
+                    '<span class="badge badge-duty">ON DUTY</span>';
+            }
+
+            const duration =
+                record
+                    ? formatDuration(
+                        getRecordDurationMinutes(
+                            record
+                        )
+                    )
+                    : "—";
+
+            const inSelfie =
+                record
+                    ? selfieLink(
+                        record.in_selfie_url ||
+                        record.selfie_url,
+                        "IN"
+                    )
+                    : "—";
+
+            const outSelfie =
+                record
+                    ? selfieLink(
+                        record.out_selfie_url,
+                        "OUT"
+                    )
+                    : "—";
+
+            const inLocation =
+                record
+                    ? locationLink(
+                        record.in_latitude ??
+                        record.latitude,
+                        record.in_longitude ??
+                        record.longitude,
+                        "📍 IN Location"
+                    )
+                    : "—";
+
+            const outLocation =
+                record
+                    ? locationLink(
+                        record.out_latitude,
+                        record.out_longitude,
+                        "📍 OUT Location"
+                    )
+                    : "—";
+
+            const historyButton =
+                record
+                    ? '<button class="secondary small-btn" onclick="showLocationHistory(' +
+                      Number(record.id) +
+                      ',\'' +
+                      escapeJS(
+                          employee.employee_name
+                      ) +
+                      '\')">🗺️ History</button>'
+                    : "—";
 
             row.innerHTML =
 
                 "<td>" +
-
                 escapeHTML(
                     employee.employee_name
                 ) +
-
                 "</td>" +
 
-
                 "<td>" +
-
                 escapeHTML(
                     employee.employee_code || "—"
                 ) +
-
                 "</td>" +
 
-
                 "<td>" +
-
-                (
-                    record?.in_time ||
-                    "—"
-                ) +
-
+                statusHTML +
                 "</td>" +
 
-
                 "<td>" +
-
-                (
-                    record?.out_time ||
-                    "—"
-                ) +
-
+                (record?.in_time || "—") +
                 "</td>" +
 
-
                 "<td>" +
-
-                selfieHTML +
-
+                (record?.out_time || "—") +
                 "</td>" +
 
+                "<td>" +
+                duration +
+                "</td>" +
 
                 "<td>" +
+                inSelfie +
+                "</td>" +
 
-                locationHTML +
+                "<td>" +
+                outSelfie +
+                "</td>" +
 
+                "<td>" +
+                inLocation +
+                "</td>" +
+
+                "<td>" +
+                outLocation +
+                "</td>" +
+
+                "<td>" +
+                historyButton +
                 "</td>";
 
-
             table.appendChild(row);
-
         }
+    );
+}
 
+
+/* =====================================================
+   SUMMARY
+===================================================== */
+
+function updateSummary(
+    employees,
+    attendanceData
+){
+
+    let present = 0;
+    let absent = 0;
+    let incomplete = 0;
+    let duty = 0;
+
+    employees.forEach(
+        function(employee){
+
+            const record =
+                attendanceData.find(
+                    function(item){
+                        return (
+                            item.employee_name ===
+                            employee.employee_name
+                        );
+                    }
+                );
+
+            if(!record){
+
+                absent++;
+            }
+            else if(
+                record.in_time &&
+                record.out_time
+            ){
+
+                present++;
+            }
+            else if(record.in_time){
+
+                duty++;
+                incomplete++;
+            }
+            else{
+
+                absent++;
+            }
+        }
     );
 
+    document
+        .getElementById("presentCount")
+        .innerText = present;
 
     document
-        .getElementById("summary")
+        .getElementById("absentCount")
+        .innerText = absent;
+
+    document
+        .getElementById("incompleteCount")
+        .innerText = incomplete;
+
+    document
+        .getElementById("dutyCount")
+        .innerText = duty;
+}
+
+
+/* =====================================================
+   SELFIE LINK
+===================================================== */
+
+function selfieLink(
+    url,
+    label
+){
+
+    if(!url){
+
+        return "—";
+    }
+
+    return (
+        '<a href="' +
+        escapeAttribute(url) +
+        '" target="_blank" rel="noopener noreferrer">' +
+
+        '<img src="' +
+        escapeAttribute(url) +
+        '" class="selfie-thumb" alt="' +
+        label +
+        ' Selfie">' +
+
+        "<br>" +
+        label +
+        " View</a>"
+    );
+}
+
+
+/* =====================================================
+   LOCATION LINK
+===================================================== */
+
+function locationLink(
+    lat,
+    lng,
+    label
+){
+
+    if(
+        lat === null ||
+        lat === undefined ||
+        lng === null ||
+        lng === undefined
+    ){
+
+        return "—";
+    }
+
+    const mapURL =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(
+            lat + "," + lng
+        );
+
+    return (
+        '<a href="' +
+        escapeAttribute(mapURL) +
+        '" target="_blank" rel="noopener noreferrer">' +
+        label +
+        "</a>"
+    );
+}
+
+
+/* =====================================================
+   LOCATION HISTORY
+===================================================== */
+
+async function showLocationHistory(
+    attendanceId,
+    employeeName
+){
+
+    const section =
+        document.getElementById(
+            "historySection"
+        );
+
+    const title =
+        document.getElementById(
+            "historyTitle"
+        );
+
+    const content =
+        document.getElementById(
+            "historyContent"
+        );
+
+    section.classList.remove("hidden");
+
+    title.innerText =
+        "🗺️ Location History — " +
+        employeeName;
+
+    content.innerHTML =
+        "Loading location history...";
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("attendance_locations")
+            .select("*")
+            .eq(
+                "attendance_id",
+                attendanceId
+            )
+            .order(
+                "recorded_at",
+                {ascending:true}
+            );
+
+    if(error){
+
+        content.innerHTML =
+            "Location history load nahi hui: " +
+            escapeHTML(
+                error.message
+            );
+
+        return;
+    }
+
+    if(!data || !data.length){
+
+        content.innerHTML =
+            "Abhi location history ka koi point nahi mila.";
+
+        return;
+    }
+
+    content.innerHTML = "";
+
+    data.forEach(
+        function(point,index){
+
+            const mapURL =
+                "https://www.google.com/maps/search/?api=1&query=" +
+                encodeURIComponent(
+                    point.latitude +
+                    "," +
+                    point.longitude
+                );
+
+            const time =
+                new Date(
+                    point.recorded_at
+                ).toLocaleString(
+                    "en-IN"
+                );
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "history-item";
+
+            item.innerHTML =
+
+                "<b>Point " +
+                (index+1) +
+                "</b><br>" +
+
+                "🕐 " +
+                escapeHTML(time) +
+                "<br>" +
+
+                "📍 " +
+                point.latitude.toFixed(6) +
+                ", " +
+                point.longitude.toFixed(6) +
+                "<br>" +
+
+                "🎯 Accuracy: " +
+                Math.round(
+                    point.accuracy || 0
+                ) +
+                "m<br>" +
+
+                '<a href="' +
+                escapeAttribute(mapURL) +
+                '" target="_blank" rel="noopener noreferrer">' +
+                "Open in Google Maps" +
+                "</a>";
+
+            content.appendChild(item);
+        }
+    );
+
+    section.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+
+/* =====================================================
+   MONTHLY ATTENDANCE
+===================================================== */
+
+async function loadMonthlyAttendance(){
+
+    const selected =
+        document
+            .getElementById(
+                "monthSelector"
+            )
+            .value;
+
+    if(!selected){
+
+        alert(
+            "Month select karo."
+        );
+
+        return;
+    }
+
+    const [year,month] =
+        selected.split("-").map(Number);
+
+    const firstDay =
+        year +
+        "-" +
+        String(month).padStart(2,"0") +
+        "-01";
+
+    const lastDate =
+        new Date(
+            year,
+            month,
+            0
+        ).getDate();
+
+    const lastDay =
+        year +
+        "-" +
+        String(month).padStart(2,"0") +
+        "-" +
+        String(lastDate).padStart(2,"0");
+
+    const {
+        data: attendanceData,
+        error: attendanceError
+    } =
+        await supabaseClient
+            .from("ATTENDANCE")
+            .select("*")
+            .gte(
+                "attendance_date",
+                firstDay
+            )
+            .lte(
+                "attendance_date",
+                lastDay
+            )
+            .order(
+                "attendance_date",
+                {ascending:true}
+            );
+
+    if(attendanceError){
+
+        alert(
+            "Monthly attendance load nahi hui: " +
+            attendanceError.message
+        );
+
+        return;
+    }
+
+    const {
+        data: employees,
+        error: employeeError
+    } =
+        await supabaseClient
+            .from("employees")
+            .select("*")
+            .order(
+                "employee_name",
+                {ascending:true}
+            );
+
+    if(employeeError){
+
+        alert(
+            "Employee list load nahi hui: " +
+            employeeError.message
+        );
+
+        return;
+    }
+
+    let presentDays = 0;
+    let absentDays = 0;
+    let incompleteDays = 0;
+
+    const daysInMonth =
+        lastDate;
+
+    (employees || []).forEach(
+        function(employee){
+
+            for(
+                let day=1;
+                day<=daysInMonth;
+                day++
+            ){
+
+                const date =
+                    year +
+                    "-" +
+                    String(month).padStart(2,"0") +
+                    "-" +
+                    String(day).padStart(2,"0");
+
+                const record =
+                    (attendanceData || []).find(
+                        function(item){
+
+                            return (
+                                item.employee_name ===
+                                employee.employee_name &&
+                                item.attendance_date ===
+                                date
+                            );
+                        }
+                    );
+
+                if(
+                    record &&
+                    record.in_time &&
+                    record.out_time
+                ){
+
+                    presentDays++;
+                }
+                else if(
+                    record &&
+                    record.in_time
+                ){
+
+                    incompleteDays++;
+                }
+                else{
+
+                    absentDays++;
+                }
+            }
+        }
+    );
+
+    document
+        .getElementById(
+            "monthlySummary"
+        )
         .innerText =
+        "Month: " +
+        selected +
+        " | Present: " +
+        presentDays +
+        " | Absent: " +
+        absentDays +
+        " | Incomplete: " +
+        incompleteDays;
 
-        "Present: " +
-        present +
-        " / " +
-        (employees || []).length;
+    /*
+       Monthly detail rows
+    */
 
+    const table =
+        document.getElementById(
+            "attendanceTable"
+        );
+
+    table.innerHTML = "";
+
+    (attendanceData || []).forEach(
+        function(record){
+
+            const row =
+                document.createElement("tr");
+
+            let status =
+                "INCOMPLETE";
+
+            if(
+                record.in_time &&
+                record.out_time
+            ){
+
+                status =
+                    "PRESENT";
+            }
+
+            const duration =
+                formatDuration(
+                    getRecordDurationMinutes(
+                        record
+                    )
+                );
+
+            row.innerHTML =
+
+                "<td>" +
+                escapeHTML(
+                    record.employee_name || "—"
+                ) +
+                "</td>" +
+
+                "<td>—</td>" +
+
+                '<td><span class="badge ' +
+                (
+                    status === "PRESENT"
+                        ? "badge-present"
+                        : "badge-incomplete"
+                ) +
+                '">' +
+                status +
+                "</span></td>" +
+
+                "<td>" +
+                (record.in_time || "—") +
+                "</td>" +
+
+                "<td>" +
+                (record.out_time || "—") +
+                "</td>" +
+
+                "<td>" +
+                duration +
+                "</td>" +
+
+                "<td>" +
+                selfieLink(
+                    record.in_selfie_url ||
+                    record.selfie_url,
+                    "IN"
+                ) +
+                "</td>" +
+
+                "<td>" +
+                selfieLink(
+                    record.out_selfie_url,
+                    "OUT"
+                ) +
+                "</td>" +
+
+                "<td>" +
+                locationLink(
+                    record.in_latitude ??
+                    record.latitude,
+                    record.in_longitude ??
+                    record.longitude,
+                    "📍 IN"
+                ) +
+                "</td>" +
+
+                "<td>" +
+                locationLink(
+                    record.out_latitude,
+                    record.out_longitude,
+                    "📍 OUT"
+                ) +
+                "</td>" +
+
+                "<td>" +
+                '<button class="secondary small-btn" onclick="showLocationHistory(' +
+                Number(record.id) +
+                ',\'' +
+                escapeJS(
+                    record.employee_name || ""
+                ) +
+                '\')">🗺️ History</button>' +
+                "</td>";
+
+            table.appendChild(row);
+        }
+    );
 }
 
 
 /* =====================================================
-   ESCAPE HTML
+   CSV EXPORT
 ===================================================== */
 
-function escapeHTML(value) {
-
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-function escapeAttribute(value) {
-
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        );
-
-}
-
-
-/* =====================================================
-   EXPORT CSV
-===================================================== */
-
-async function exportCSV() {
+async function exportCSV(){
 
     const {
         data,
@@ -2607,13 +2941,10 @@ async function exportCSV() {
             )
             .order(
                 "id",
-                {
-                    ascending: true
-                }
+                {ascending:true}
             );
 
-
-    if (error) {
+    if(error){
 
         alert(
             "Export failed: " +
@@ -2623,93 +2954,143 @@ async function exportCSV() {
         return;
     }
 
-
     let csv =
-
-        "Employee,Date,IN,OUT,Latitude,Longitude,Accuracy,Selfie URL\n";
-
+        "Employee,Date,IN,OUT,Duration,IN Latitude,IN Longitude,OUT Latitude,OUT Longitude,IN Selfie,OUT Selfie\n";
 
     (data || []).forEach(
+        function(record){
 
-        function(record) {
+            const duration =
+                formatDuration(
+                    getRecordDurationMinutes(
+                        record
+                    )
+                );
 
             csv +=
+                csvCell(
+                    record.employee_name
+                ) + "," +
 
-                '"' +
-                (record.employee_name || "") +
-                '","' +
+                csvCell(
+                    record.attendance_date
+                ) + "," +
 
-                (record.attendance_date || "") +
-                '","' +
+                csvCell(
+                    record.in_time
+                ) + "," +
 
-                (record.in_time || "") +
-                '","' +
+                csvCell(
+                    record.out_time
+                ) + "," +
 
-                (record.out_time || "") +
-                '","' +
+                csvCell(
+                    duration
+                ) + "," +
 
-                (record.latitude || "") +
-                '","' +
+                csvCell(
+                    record.in_latitude ??
+                    record.latitude
+                ) + "," +
 
-                (record.longitude || "") +
-                '","' +
+                csvCell(
+                    record.in_longitude ??
+                    record.longitude
+                ) + "," +
 
-                (record.accuracy || "") +
-                '","' +
+                csvCell(
+                    record.out_latitude
+                ) + "," +
 
-                (record.selfie_url || "") +
+                csvCell(
+                    record.out_longitude
+                ) + "," +
 
-                '"\n';
+                csvCell(
+                    record.in_selfie_url ||
+                    record.selfie_url
+                ) + "," +
 
+                csvCell(
+                    record.out_selfie_url
+                ) +
+
+                "\n";
         }
-
     );
-
 
     const blob =
         new Blob(
             [csv],
-            {
-                type: "text/csv"
-            }
+            {type:"text/csv"}
         );
-
 
     const url =
         URL.createObjectURL(blob);
 
-
     const link =
         document.createElement("a");
 
-
     link.href = url;
 
-
     link.download =
-
         "Saanvi_Motors_Attendance_" +
-
         todayKey() +
-
         ".csv";
-
 
     document.body.appendChild(link);
 
-
     link.click();
-
 
     document.body.removeChild(link);
 
-
     URL.revokeObjectURL(url);
+}
 
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function csvCell(value){
+
+    return '"' +
+        String(value ?? "")
+            .replace(/"/g,'""') +
+        '"';
+}
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function escapeAttribute(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/"/g,"&quot;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;");
+}
+
+function escapeJS(value){
+
+    return String(value ?? "")
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/"/g,'\\"')
+        .replace(/\n/g,"\\n")
+        .replace(/\r/g,"\\r");
 }
 
 </script>
 
 </body>
-
 </html>
+```
