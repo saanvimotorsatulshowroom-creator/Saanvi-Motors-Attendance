@@ -1,225 +1,665 @@
 ```css
+/* =========================================================
+   SAANVI MOTORS ATTENDANCE
+   PREMIUM WHITE + BLUE COMMUNICATION THEME
+========================================================= */
+
 * {
     box-sizing: border-box;
 }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background:
-        radial-gradient(circle at top right, rgba(37,99,235,0.08), transparent 30%),
-        #f3f6fa;
-    color: #172033;
+html {
+    scroll-behavior: smooth;
 }
 
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #172033;
+
+    background:
+        radial-gradient(
+            circle at 8% 15%,
+            rgba(37, 99, 235, 0.14),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 92% 85%,
+            rgba(14, 165, 233, 0.12),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #f5faff 48%,
+            #eaf4ff 100%
+        );
+
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* =========================================================
+   COMMUNICATION NETWORK BACKGROUND
+========================================================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(
+            32deg,
+            transparent 48%,
+            rgba(37, 99, 235, 0.075) 49%,
+            transparent 50%
+        ),
+        linear-gradient(
+            148deg,
+            transparent 48%,
+            rgba(14, 165, 233, 0.065) 49%,
+            transparent 50%
+        );
+
+    background-size: 190px 190px;
+    opacity: 0.7;
+}
+
+/* Communication dots */
+
+body::after {
+    content: "";
+    position: fixed;
+
+    width: 500px;
+    height: 500px;
+
+    right: -180px;
+    top: -170px;
+
+    border-radius: 50%;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.24) 2px,
+            transparent 3px
+        );
+
+    background-size: 30px 30px;
+
+    opacity: 0.65;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
 .container {
+    position: relative;
+    z-index: 2;
+
     max-width: 600px;
     margin: auto;
     padding: 15px;
 }
 
-/* =========================
+/* =========================================================
    HEADER
-========================= */
+========================================================= */
 
 .header {
     text-align: center;
-    padding: 25px 10px;
+    padding: 28px 10px 22px;
 }
 
 .header h1 {
     margin: 0;
-    font-size: 28px;
+
+    font-size: 29px;
+    font-weight: 800;
+
+    color: #12305b;
+    letter-spacing: 0.3px;
 }
 
 .header p {
-    color: #667085;
+    margin: 8px 0 0;
+
+    color: #64748b;
+    font-size: 14px;
 }
 
-/* =========================
+/* =========================================================
    NORMAL CARD
-========================= */
+========================================================= */
 
 .card {
-    background: white;
+    position: relative;
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0.90);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
     padding: 22px;
-    border-radius: 18px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+
+    border-radius: 20px;
+
+    border: 1px solid rgba(37, 99, 235, 0.10);
+
+    box-shadow:
+        0 15px 45px rgba(30, 64, 175, 0.09),
+        0 3px 12px rgba(0, 0, 0, 0.04);
 }
 
-/* =========================
+/* =========================================================
    PREMIUM EMPLOYEE LOGIN
-========================= */
+========================================================= */
 
 #employeeLogin {
     position: relative;
     overflow: hidden;
 
-    padding: 35px 28px;
+    padding: 38px 28px;
 
-    border-radius: 22px;
+    border-radius: 24px;
+
+    /*
+       WHITE + BLUE COMMUNICATION STYLE
+    */
 
     background:
         radial-gradient(
-            circle at 90% 10%,
-            rgba(37, 99, 235, 0.38),
-            transparent 32%
+            circle at 92% 8%,
+            rgba(37, 99, 235, 0.20),
+            transparent 30%
         ),
         radial-gradient(
             circle at 5% 95%,
-            rgba(14, 165, 233, 0.20),
-            transparent 35%
+            rgba(14, 165, 233, 0.16),
+            transparent 34%
         ),
         linear-gradient(
             135deg,
-            #050816 0%,
-            #111827 55%,
-            #172554 100%
+            #ffffff 0%,
+            #f8fbff 55%,
+            #edf6ff 100%
         );
 
-    color: white;
+    color: #172033;
 
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgba(37, 99, 235, 0.14);
 
     box-shadow:
-        0 20px 50px rgba(0,0,0,0.28),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+        0 25px 65px rgba(30, 64, 175, 0.14),
+        0 5px 18px rgba(0, 0, 0, 0.05);
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 
-/* Top decorative glow */
+/* =========================================================
+   LOGIN DECORATIVE BLUE CIRCLE
+========================================================= */
 
 #employeeLogin::before {
     content: "";
 
     position: absolute;
 
-    width: 220px;
-    height: 220px;
+    width: 230px;
+    height: 230px;
 
-    right: -100px;
-    top: -100px;
+    right: -115px;
+    top: -115px;
 
     border-radius: 50%;
 
-    background: rgba(37,99,235,0.25);
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.20),
+            rgba(14, 165, 233, 0.07) 45%,
+            transparent 70%
+        );
 
-    filter: blur(15px);
+    filter: blur(3px);
 
     pointer-events: none;
 }
 
-/* Bottom decorative glow */
+/* =========================================================
+   LOGIN NETWORK DECORATION
+========================================================= */
 
 #employeeLogin::after {
     content: "";
 
     position: absolute;
 
-    width: 180px;
+    width: 260px;
     height: 180px;
 
-    left: -90px;
-    bottom: -100px;
+    left: -100px;
+    bottom: -90px;
 
-    border-radius: 50%;
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.18) 2px,
+            transparent 3px
+        );
 
-    background: rgba(14,165,233,0.18);
+    background-size: 28px 28px;
 
-    filter: blur(18px);
+    opacity: 0.65;
+
+    transform: rotate(-10deg);
 
     pointer-events: none;
 }
 
-/* Login heading */
+/* =========================================================
+   LOGIN HEADING
+========================================================= */
 
 #employeeLogin h2 {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 
     text-align: center;
 
-    color: white;
+    color: #12305b;
 
     font-size: 28px;
+    font-weight: 800;
 
-    margin: 0 0 28px;
+    margin: 0 0 30px;
 
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
 }
 
-/* Blue line under heading */
+/* Blue line */
 
 #employeeLogin h2::after {
     content: "";
 
     display: block;
 
-    width: 55px;
-    height: 3px;
+    width: 58px;
+    height: 4px;
 
     margin: 11px auto 0;
 
-    border-radius: 10px;
+    border-radius: 20px;
 
-    background: #3b82f6;
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #0ea5e9
+        );
 
     box-shadow:
-        0 0 12px rgba(59,130,246,0.8);
+        0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
-/* Login inputs */
+/* =========================================================
+   LOGIN INPUTS
+========================================================= */
 
 #employeeLogin input {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 
     width: 100%;
 
-    padding: 15px;
+    padding: 15px 16px;
 
-    margin-bottom: 13px;
+    margin-bottom: 14px;
 
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid #d6e4f3;
 
-    border-radius: 11px;
+    border-radius: 12px;
 
-    background: rgba(255,255,255,0.96);
+    background: rgba(255, 255, 255, 0.96);
 
-    color: #111827;
+    color: #172033;
 
     font-size: 16px;
 
     outline: none;
 
-    transition: 0.25s;
+    box-shadow:
+        0 3px 12px rgba(30, 64, 175, 0.04);
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
 }
 
 #employeeLogin input::placeholder {
-    color: #667085;
+    color: #8a98aa;
+}
+
+#employeeLogin input:hover {
+    border-color: #b8d1ee;
 }
 
 #employeeLogin input:focus {
-    border-color: #3b82f6;
+    border-color: #2563eb;
+
+    transform: translateY(-1px);
 
     box-shadow:
-        0 0 0 3px rgba(59,130,246,0.18),
-        0 8px 20px rgba(0,0,0,0.15);
+        0 0 0 3px rgba(37, 99, 235, 0.10),
+        0 8px 22px rgba(30, 64, 175, 0.09);
 }
 
-/* Login button */
+/* =========================================================
+   LOGIN BUTTON
+========================================================= */
 
 #employeeLogin button {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 
     width: 100%;
 
-    margin-top: 5px;
+    margin-top: 7px;
 
     padding: 15px;
 
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb 0%,
+            #1d4ed8 55%,
+            #0ea5e9 100%
+        );
+
+    color: white;
+
+    border: none;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(37, 99, 235, 0.25);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+#employeeLogin button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(37, 99, 235, 0.32);
+}
+
+#employeeLogin button:active {
+    transform: translateY(0);
+}
+
+/* =========================================================
+   GENERAL FORM
+========================================================= */
+
+label {
+    display: block;
+
+    font-weight: 700;
+
+    margin-top: 15px;
+    margin-bottom: 7px;
+
+    color: #263b58;
+}
+
+select,
+input {
+    width: 100%;
+
+    padding: 14px;
+
+    border: 1px solid #d0dbe8;
+
     border-radius: 11px;
 
+    font-size: 16px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+select:focus,
+input:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.09);
+}
+
+/* =========================================================
+   DATE TIME
+========================================================= */
+
+.date-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fbff,
+            #eef6ff
+        );
+
+    border: 1px solid #e0ebf7;
+
+    padding: 14px;
+
+    margin-top: 15px;
+
+    border-radius: 11px;
+
+    color: #34506f;
+
+    font-size: 14px;
+}
+
+/* =========================================================
+   BUTTON AREA
+========================================================= */
+
+.buttons {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 18px;
+}
+
+button {
+    border: none;
+
+    border-radius: 11px;
+
+    padding: 14px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+/* =========================================================
+   MARK IN
+========================================================= */
+
+.mark-in {
+    flex: 1;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dcfce7,
+            #d1fae5
+        );
+
+    color: #087443;
+
+    border: 1px solid #b7ebc9;
+}
+
+.mark-in:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(8, 116, 67, 0.12);
+}
+
+/* =========================================================
+   MARK OUT
+========================================================= */
+
+.mark-out {
+    flex: 1;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fee2e2,
+            #ffe7e7
+        );
+
+    color: #b42318;
+
+    border: 1px solid #f6caca;
+}
+
+.mark-out:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(180, 35, 24, 0.10);
+}
+
+/* =========================================================
+   ADMIN BUTTON
+========================================================= */
+
+.admin-btn {
+    width: 100%;
+
+    margin-top: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #172033,
+            #263b58
+        );
+
+    color: white;
+
+    box-shadow:
+        0 8px 20px rgba(23, 32, 51, 0.15);
+}
+
+.admin-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(23, 32, 51, 0.20);
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+    margin-top: 18px;
+
+    padding: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fbff,
+            #f1f7ff
+        );
+
+    border: 1px solid #e0ebf7;
+
+    border-radius: 11px;
+
+    line-height: 1.6;
+
+    color: #3b526e;
+}
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+.hidden {
+    display: none;
+}
+
+/* =========================================================
+   TABS
+========================================================= */
+
+.tabs {
+    display: flex;
+
+    gap: 8px;
+
+    margin-bottom: 20px;
+}
+
+.tab {
+    flex: 1;
+
+    background: #edf4fb;
+
+    color: #425b77;
+
+    border: 1px solid #dce9f5;
+}
+
+.tab:hover {
+    background: #e3effb;
+}
+
+.tab.active {
     background:
         linear-gradient(
             135deg,
@@ -229,222 +669,151 @@ body {
 
     color: white;
 
-    border: none;
-
-    font-size: 16px;
-    font-weight: bold;
+    border-color: transparent;
 
     box-shadow:
-        0 8px 20px rgba(37,99,235,0.35);
-
-    transition: all 0.25s ease;
+        0 7px 18px rgba(37, 99, 235, 0.20);
 }
 
-#employeeLogin button:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 12px 25px rgba(37,99,235,0.45);
-}
-
-#employeeLogin button:active {
-    transform: translateY(0);
-}
-
-/* =========================
-   FORM
-========================= */
-
-label {
-    display: block;
-    font-weight: bold;
-    margin-top: 15px;
-    margin-bottom: 7px;
-}
-
-select,
-input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #d0d5dd;
-    border-radius: 10px;
-    font-size: 16px;
-}
-
-/* =========================
-   DATE TIME
-========================= */
-
-.date-time {
-    display: flex;
-    justify-content: space-between;
-
-    background: #f8f9fb;
-
-    padding: 14px;
-
-    margin-top: 15px;
-
-    border-radius: 10px;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 18px;
-}
-
-button {
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.mark-in {
-    flex: 1;
-    background: #dff7e7;
-    color: #087443;
-}
-
-.mark-out {
-    flex: 1;
-    background: #ffe2e2;
-    color: #b42318;
-}
-
-.admin-btn {
-    width: 100%;
-    margin-top: 15px;
-    background: #172033;
-    color: white;
-}
-
-/* =========================
-   STATUS
-========================= */
-
-.status {
-    margin-top: 18px;
-
-    padding: 14px;
-
-    background: #f8f9fb;
-
-    border-radius: 10px;
-
-    line-height: 1.6;
-}
-
-/* =========================
-   HIDDEN
-========================= */
-
-.hidden {
-    display: none;
-}
-
-/* =========================
-   TABS
-========================= */
-
-.tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.tab {
-    flex: 1;
-    background: #edf1f5;
-}
-
-.tab.active {
-    background: #172033;
-    color: white;
-}
-
-/* =========================
+/* =========================================================
    ADMIN
-========================= */
+========================================================= */
 
 .admin-header {
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
     margin-top: 20px;
 }
 
 .admin-header h2 {
     margin: 0;
+
+    color: #12305b;
 }
+
+/* =========================================================
+   TABLE
+========================================================= */
 
 table {
     width: 100%;
+
     border-collapse: collapse;
+
     margin-top: 15px;
+
+    background: white;
+
+    border-radius: 12px;
+
+    overflow: hidden;
 }
 
 th,
 td {
     padding: 12px 7px;
-    border-bottom: 1px solid #eee;
+
+    border-bottom: 1px solid #edf1f5;
+
     text-align: left;
 }
 
 th {
     font-size: 13px;
-    color: #667085;
+
+    color: #64748b;
+
+    background: #f7faff;
 }
+
+td {
+    color: #334155;
+
+    font-size: 14px;
+}
+
+tr:hover td {
+    background: #f8fbff;
+}
+
+/* =========================================================
+   EXPORT
+========================================================= */
 
 .export {
-    background: #172033;
+    background:
+        linear-gradient(
+            135deg,
+            #172033,
+            #263b58
+        );
+
     color: white;
-    padding: 10px;
+
+    padding: 10px 14px;
+
+    border-radius: 9px;
 }
 
-/* =========================
+/* =========================================================
    FOOTER
-========================= */
+========================================================= */
 
 .footer {
+    position: relative;
+    z-index: 2;
+
     text-align: center;
-    color: #667085;
+
+    color: #718096;
+
     font-size: 12px;
-    padding: 15px;
+
+    padding: 18px 15px;
 }
 
-/* =========================
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
 
-@media(max-width:500px) {
+@media (max-width: 500px) {
 
     .container {
         padding: 12px;
     }
 
     .header {
-        padding: 20px 10px;
+        padding: 22px 10px 18px;
     }
 
     .header h1 {
         font-size: 24px;
     }
 
+    .header p {
+        font-size: 13px;
+    }
+
     #employeeLogin {
         padding: 30px 20px;
-        border-radius: 18px;
+
+        border-radius: 20px;
     }
 
     #employeeLogin h2 {
         font-size: 24px;
+    }
+
+    #employeeLogin input {
+        padding: 14px;
+    }
+
+    #employeeLogin button {
+        padding: 14px;
     }
 
     .buttons {
@@ -452,7 +821,36 @@ th {
     }
 
     .date-time {
-        font-size: 14px;
+        font-size: 13px;
+
+        gap: 8px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+}
+
+/* =========================================================
+   SMALL PHONE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .container {
+        padding: 9px;
+    }
+
+    #employeeLogin {
+        padding: 26px 16px;
+    }
+
+    #employeeLogin h2 {
+        font-size: 22px;
+    }
+
+    .header h1 {
+        font-size: 22px;
     }
 }
 ```
